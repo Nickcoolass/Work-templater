@@ -3,13 +3,133 @@ let employees = [];
 let currentEmployee = null;
 let selectedDates = [];
 let timeOffData = []; // Store imported time off data
+let isAdmin = false;
+let currentUserName = null;
+
+// Admin credentials
+const ADMIN_USERNAME = 'Isabella';
+const ADMIN_PASSWORD = 'Kristina1';
 
 // Initialize app
 document.addEventListener('DOMContentLoaded', function() {
     loadEmployeesFromStorage();
-    populateEmployeeSelect();
-    refreshReport();
+    showLoginScreen();
 });
+
+// Login Functions
+function showLoginScreen() {
+    document.getElementById('loginScreen').style.display = 'flex';
+    document.getElementById('mainApp').style.display = 'none';
+}
+
+function showAdminLogin() {
+    document.getElementById('adminLoginModal').style.display = 'block';
+    document.getElementById('adminUsername').value = '';
+    document.getElementById('adminPassword').value = '';
+    document.getElementById('adminUsername').focus();
+}
+
+function closeAdminLogin() {
+    document.getElementById('adminLoginModal').style.display = 'none';
+}
+
+function adminLogin() {
+    const username = document.getElementById('adminUsername').value;
+    const password = document.getElementById('adminPassword').value;
+
+    if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
+        isAdmin = true;
+        currentUserName = 'Administrator';
+        initializeApp();
+        closeAdminLogin();
+    } else {
+        showAlert('Forkert brugernavn eller adgangskode!', 'error');
+        document.getElementById('adminUsername').value = '';
+        document.getElementById('adminPassword').value = '';
+    }
+}
+
+function showEmployeeLogin() {
+    const select = document.getElementById('employeeLoginSelect');
+    select.innerHTML = '<option value="">Vælg dit navn...</option>';
+
+    employees.forEach((emp, index) => {
+        const option = document.createElement('option');
+        option.value = index;
+        option.textContent = emp.navn;
+        select.appendChild(option);
+    });
+
+    document.getElementById('employeeLoginModal').style.display = 'block';
+}
+
+function closeEmployeeLogin() {
+    document.getElementById('employeeLoginModal').style.display = 'none';
+}
+
+function employeeLogin() {
+    const select = document.getElementById('employeeLoginSelect');
+    const index = select.value;
+
+    if (index === '') {
+        showAlert('Vælg venligst dit navn', 'error');
+        return;
+    }
+
+    isAdmin = false;
+    currentEmployee = employees[index];
+    currentUserName = currentEmployee.navn;
+    initializeApp();
+    closeEmployeeLogin();
+
+    // Automatically select the employee
+    document.getElementById('employeeSelect').value = index;
+    loadEmployeeData();
+}
+
+function initializeApp() {
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('mainApp').style.display = 'block';
+
+    // Update user display
+    document.getElementById('userDisplay').textContent = isAdmin ? '🔐 Administrator' : `👤 ${currentUserName}`;
+
+    // Show/hide elements based on role
+    if (isAdmin) {
+        document.getElementById('importSection').style.display = 'block';
+        document.getElementById('reportTab').style.display = 'block';
+        document.getElementById('addEmployeeBtn').style.display = 'inline-block';
+        document.getElementById('selectEmployeeHeader').textContent = 'Vælg Medarbejder';
+    } else {
+        document.getElementById('importSection').style.display = 'none';
+        document.getElementById('reportTab').style.display = 'none';
+        document.getElementById('addEmployeeBtn').style.display = 'none';
+        document.getElementById('selectEmployeeHeader').textContent = 'Din Profil';
+
+        // Disable employee select for non-admin
+        document.getElementById('employeeSelect').disabled = true;
+    }
+
+    populateEmployeeSelect();
+    if (isAdmin) {
+        refreshReport();
+    }
+}
+
+function logout() {
+    if (confirm('Er du sikker på at du vil logge ud?')) {
+        isAdmin = false;
+        currentEmployee = null;
+        currentUserName = null;
+        selectedDates = [];
+
+        // Reset form
+        document.getElementById('employeeForm').style.display = 'none';
+        document.getElementById('employeeSelect').disabled = false;
+
+        showLoginScreen();
+    }
+}
 
 // Tab management
 function showTab(tabName) {
@@ -67,6 +187,8 @@ function loadInitialData() {
             geolms_dates: [],
             lonsedel_1: 0,
             lonsedel_2: 0,
+            ferieOverforselValg: '',
+            ferieOverforselDage: 0,
             timeOffRecords: [] // Array of time off records
         }
     ];
@@ -127,6 +249,8 @@ function importTimeOffData(csvText) {
                 geolms_dates: [],
                 lonsedel_1: 0,
                 lonsedel_2: 0,
+                ferieOverforselValg: '',
+                ferieOverforselDage: 0,
                 timeOffRecords: []
             };
             employees.push(emp);
@@ -187,6 +311,19 @@ function loadEmployeeData() {
     document.getElementById('lonsedel_1').value = currentEmployee.lonsedel_1 || 0;
     document.getElementById('lonsedel_2').value = currentEmployee.lonsedel_2 || 0;
 
+    // Load ferieoverførsel fields
+    const valg = currentEmployee.ferieOverforselValg || '';
+    if (valg === 'Overfør til næste år') {
+        document.getElementById('ferieOverforsel_overfør').checked = true;
+    } else if (valg === 'Udbetal med marts løn') {
+        document.getElementById('ferieOverforsel_udbetal').checked = true;
+    } else {
+        // Clear both radio buttons
+        document.getElementById('ferieOverforsel_overfør').checked = false;
+        document.getElementById('ferieOverforsel_udbetal').checked = false;
+    }
+    document.getElementById('ferieOverforselDage').value = currentEmployee.ferieOverforselDage || 0;
+
     // Load selected dates
     selectedDates = currentEmployee.geolms_dates || [];
     displaySelectedDates();
@@ -214,6 +351,8 @@ function addNewEmployee() {
             geolms_dates: [],
             lonsedel_1: 0,
             lonsedel_2: 0,
+            ferieOverforselValg: '',
+            ferieOverforselDage: 0,
             timeOffRecords: []
         };
 
@@ -241,6 +380,20 @@ function saveEmployeeData() {
     employees[index].lonsedel_1 = parseFloat(document.getElementById('lonsedel_1').value) || 0;
     employees[index].lonsedel_2 = parseFloat(document.getElementById('lonsedel_2').value) || 0;
     employees[index].geolms_dates = selectedDates;
+
+    // Save ferieoverførsel data
+    const valgRadio = document.querySelector('input[name="ferieOverforselValg"]:checked');
+    employees[index].ferieOverforselValg = valgRadio ? valgRadio.value : '';
+
+    const dage = parseFloat(document.getElementById('ferieOverforselDage').value) || 0;
+    // Validate max 5 days
+    if (dage > 5) {
+        showAlert('Du kan maksimalt vælge 5 dage!', 'error');
+        document.getElementById('ferieOverforselDage').value = 5;
+        employees[index].ferieOverforselDage = 5;
+    } else {
+        employees[index].ferieOverforselDage = dage;
+    }
 
     saveEmployeesToStorage();
     showAlert('Data gemt!', 'success');
@@ -438,50 +591,106 @@ function refreshReport() {
         return;
     }
 
-    let html = '<table class="report-table">';
+    let html = '<div style="overflow-x: auto;">';
+    html += '<table class="report-table">';
     html += '<thead><tr>';
-    html += '<th>Navn</th>';
-    html += '<th class="number">SHIFTS Ferie (1/1-31/8)</th>';
-    html += '<th class="number">SHIFTS Ferie (1/9-30/11)</th>';
-    html += '<th class="number">SHIFTS Ferie (1/12+)</th>';
-    html += '<th class="number">SHIFTS Fridag (1/1-31/8)</th>';
-    html += '<th class="number">SHIFTS Fridag (1/9-30/11)</th>';
-    html += '<th class="number">SHIFTS Fridag (1/12+)</th>';
-    html += '<th class="number">GEOLMS I alt</th>';
-    html += '<th class="number">GEOLMS Holdt</th>';
-    html += '<th class="number">Lønsedel 1</th>';
-    html += '<th class="number">Lønsedel 2</th>';
-    html += '<th class="number">Total SHIFTS Ferie</th>';
-    html += '<th class="number">Estimeret Tilbage</th>';
-    html += '<th>Time Off</th>';
+    html += '<th rowspan="2">Navn</th>';
+    html += '<th colspan="3" class="group-header">SHIFTS Ferie</th>';
+    html += '<th colspan="3" class="group-header">SHIFTS Feriefridage</th>';
+    html += '<th colspan="2" class="group-header">GEOLMS</th>';
+    html += '<th colspan="2" class="group-header">Lønsedler</th>';
+    html += '<th colspan="2" class="group-header">Ferieoverførsel</th>';
+    html += '<th colspan="4" class="group-header">Beregninger</th>';
+    html += '<th rowspan="2">Time Off</th>';
+    html += '</tr>';
+    html += '<tr>';
+    // SHIFTS Ferie sub-headers
+    html += '<th class="number sub-header">1/1-31/8</th>';
+    html += '<th class="number sub-header">1/9-30/11</th>';
+    html += '<th class="number sub-header">1/12+</th>';
+    // SHIFTS Fridag sub-headers
+    html += '<th class="number sub-header">1/1-31/8</th>';
+    html += '<th class="number sub-header">1/9-30/11</th>';
+    html += '<th class="number sub-header">1/12+</th>';
+    // GEOLMS sub-headers
+    html += '<th class="number sub-header">I alt</th>';
+    html += '<th class="number sub-header">Holdt</th>';
+    // Lønsedel sub-headers
+    html += '<th class="number sub-header">Løns. 1</th>';
+    html += '<th class="number sub-header">Løns. 2</th>';
+    // Ferieoverførsel sub-headers
+    html += '<th class="sub-header">Valg</th>';
+    html += '<th class="number sub-header">Dage</th>';
+    // Beregninger sub-headers
+    html += '<th class="number sub-header">Total SHIFTS</th>';
+    html += '<th class="number sub-header">Eget Input Total</th>';
+    html += '<th class="number sub-header">Forskel</th>';
+    html += '<th class="number sub-header">Status</th>';
     html += '</tr></thead><tbody>';
 
     employees.forEach((emp, idx) => {
-        const total_shifts = (emp.shifts_ferie_1 || 0) + (emp.shifts_ferie_2 || 0) + (emp.shifts_ferie_3 || 0);
+        const total_shifts_ferie = (emp.shifts_ferie_1 || 0) + (emp.shifts_ferie_2 || 0) + (emp.shifts_ferie_3 || 0);
+        const total_shifts_fridag = (emp.shifts_fridag_1 || 0) + (emp.shifts_fridag_2 || 0) + (emp.shifts_fridag_3 || 0);
         const geolms_holdt = (emp.geolms_dates || []).length;
-        const remaining = total_shifts - geolms_holdt;
+        const geolms_total = (emp.geolms_total || 0);
+        const lonsedel_total = (emp.lonsedel_1 || 0) + (emp.lonsedel_2 || 0);
+
+        // Eget input = GEOLMS total + Lønsedler
+        const eget_input_total = geolms_total + lonsedel_total;
+
+        // Forskel = SHIFTS - Eget Input
+        const forskel = total_shifts_ferie - eget_input_total;
+
+        // Status baseret på forskel
+        let statusClass = '';
+        let statusText = '✓ Match';
+        if (Math.abs(forskel) > 0.1) {
+            if (forskel > 0) {
+                statusClass = 'status-warning';
+                statusText = `⚠️ SHIFTS har ${forskel.toFixed(1)} mere`;
+            } else {
+                statusClass = 'status-error';
+                statusText = `❌ Input har ${Math.abs(forskel).toFixed(1)} mere`;
+            }
+        } else {
+            statusClass = 'status-ok';
+        }
+
         const hasTimeOff = emp.timeOffRecords && emp.timeOffRecords.length > 0;
         const timeOffCount = hasTimeOff ? emp.timeOffRecords.length : 0;
 
         html += '<tr>';
-        html += `<td>${emp.navn}</td>`;
+        html += `<td><strong>${emp.navn}</strong></td>`;
+        // SHIFTS Ferie
         html += `<td class="number">${(emp.shifts_ferie_1 || 0).toFixed(1)}</td>`;
         html += `<td class="number">${(emp.shifts_ferie_2 || 0).toFixed(1)}</td>`;
         html += `<td class="number">${(emp.shifts_ferie_3 || 0).toFixed(1)}</td>`;
+        // SHIFTS Fridag
         html += `<td class="number">${(emp.shifts_fridag_1 || 0).toFixed(1)}</td>`;
         html += `<td class="number">${(emp.shifts_fridag_2 || 0).toFixed(1)}</td>`;
         html += `<td class="number">${(emp.shifts_fridag_3 || 0).toFixed(1)}</td>`;
-        html += `<td class="number">${(emp.geolms_total || 0).toFixed(1)}</td>`;
+        // GEOLMS
+        html += `<td class="number">${geolms_total.toFixed(1)}</td>`;
         html += `<td class="number">${geolms_holdt}</td>`;
+        // Lønsedler
         html += `<td class="number">${(emp.lonsedel_1 || 0).toFixed(1)}</td>`;
         html += `<td class="number">${(emp.lonsedel_2 || 0).toFixed(1)}</td>`;
-        html += `<td class="number"><strong>${total_shifts.toFixed(1)}</strong></td>`;
-        html += `<td class="number"><strong>${remaining.toFixed(1)}</strong></td>`;
+        // Ferieoverførsel
+        const valgDisplay = (emp.ferieOverforselValg || '-').replace('Overfør til næste år', 'Overfør').replace('Udbetal med marts løn', 'Udbetal');
+        html += `<td>${valgDisplay}</td>`;
+        html += `<td class="number">${(emp.ferieOverforselDage || 0).toFixed(1)}</td>`;
+        // Beregninger
+        html += `<td class="number calc-cell"><strong>${total_shifts_ferie.toFixed(1)}</strong></td>`;
+        html += `<td class="number calc-cell"><strong>${eget_input_total.toFixed(1)}</strong></td>`;
+        html += `<td class="number calc-cell ${statusClass}"><strong>${forskel.toFixed(1)}</strong></td>`;
+        html += `<td class="${statusClass}">${statusText}</td>`;
+        // Time Off
         html += `<td>${hasTimeOff ? `<button onclick="showEmployeeTimeOff(${idx})" class="btn-view-small">📅 Se (${timeOffCount})</button>` : '-'}</td>`;
         html += '</tr>';
     });
 
     html += '</tbody></table>';
+    html += '</div>';
     container.innerHTML = html;
 }
 
@@ -494,12 +703,27 @@ function exportToCSV() {
 
     let csv = 'Navn;SHIFTS Ferie (1/1-31/8);SHIFTS Ferie (1/9-30/11);SHIFTS Ferie (1/12+);';
     csv += 'SHIFTS Fridag (1/1-31/8);SHIFTS Fridag (1/9-30/11);SHIFTS Fridag (1/12+);';
-    csv += 'GEOLMS I alt;GEOLMS Holdt;Lønsedel 1;Lønsedel 2;Total SHIFTS Ferie;Estimeret Tilbage\n';
+    csv += 'GEOLMS I alt;GEOLMS Holdt;Lønsedel 1;Lønsedel 2;';
+    csv += 'Ferieoverførsel Valg;Ferieoverførsel Dage;';
+    csv += 'Total SHIFTS Ferie;Total SHIFTS Fridag;Eget Input Total (GEOLMS+Lønsedler);Forskel (SHIFTS-Input);Status\n';
 
     employees.forEach(emp => {
-        const total_shifts = (emp.shifts_ferie_1 || 0) + (emp.shifts_ferie_2 || 0) + (emp.shifts_ferie_3 || 0);
+        const total_shifts_ferie = (emp.shifts_ferie_1 || 0) + (emp.shifts_ferie_2 || 0) + (emp.shifts_ferie_3 || 0);
+        const total_shifts_fridag = (emp.shifts_fridag_1 || 0) + (emp.shifts_fridag_2 || 0) + (emp.shifts_fridag_3 || 0);
         const geolms_holdt = (emp.geolms_dates || []).length;
-        const remaining = total_shifts - geolms_holdt;
+        const geolms_total = (emp.geolms_total || 0);
+        const lonsedel_total = (emp.lonsedel_1 || 0) + (emp.lonsedel_2 || 0);
+        const eget_input_total = geolms_total + lonsedel_total;
+        const forskel = total_shifts_ferie - eget_input_total;
+
+        let status = 'Match';
+        if (Math.abs(forskel) > 0.1) {
+            if (forskel > 0) {
+                status = `SHIFTS har ${forskel.toFixed(1)} mere`;
+            } else {
+                status = `Input har ${Math.abs(forskel).toFixed(1)} mere`;
+            }
+        }
 
         csv += `${emp.navn};`;
         csv += `${emp.shifts_ferie_1 || 0};`;
@@ -508,12 +732,17 @@ function exportToCSV() {
         csv += `${emp.shifts_fridag_1 || 0};`;
         csv += `${emp.shifts_fridag_2 || 0};`;
         csv += `${emp.shifts_fridag_3 || 0};`;
-        csv += `${emp.geolms_total || 0};`;
+        csv += `${geolms_total};`;
         csv += `${geolms_holdt};`;
         csv += `${emp.lonsedel_1 || 0};`;
         csv += `${emp.lonsedel_2 || 0};`;
-        csv += `${total_shifts.toFixed(1)};`;
-        csv += `${remaining.toFixed(1)}\n`;
+        csv += `${emp.ferieOverforselValg || '-'};`;
+        csv += `${emp.ferieOverforselDage || 0};`;
+        csv += `${total_shifts_ferie.toFixed(1)};`;
+        csv += `${total_shifts_fridag.toFixed(1)};`;
+        csv += `${eget_input_total.toFixed(1)};`;
+        csv += `${forskel.toFixed(1)};`;
+        csv += `${status}\n`;
     });
 
     // Create download link

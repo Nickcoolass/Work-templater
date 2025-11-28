@@ -417,13 +417,14 @@ header h1 {
     width: 100%;
     border-collapse: collapse;
     margin-top: 20px;
+    font-size: 0.9rem;
 }
 
 .report-table th,
 .report-table td {
-    padding: 12px;
+    padding: 10px 8px;
     text-align: left;
-    border-bottom: 1px solid var(--border-color);
+    border: 1px solid var(--border-color);
 }
 
 .report-table th {
@@ -432,6 +433,22 @@ header h1 {
     color: var(--text-color);
     position: sticky;
     top: 0;
+    z-index: 10;
+}
+
+.report-table th.group-header {
+    background: #e2e8f0;
+    font-weight: 700;
+    text-align: center;
+    font-size: 0.95rem;
+    border-bottom: 2px solid var(--primary-color);
+}
+
+.report-table th.sub-header {
+    background: #f1f5f9;
+    font-weight: 500;
+    font-size: 0.85rem;
+    white-space: nowrap;
 }
 
 .report-table tr:hover {
@@ -439,12 +456,36 @@ header h1 {
 }
 
 .report-table td {
-    font-size: 0.95rem;
+    font-size: 0.9rem;
 }
 
 .report-table .number {
     text-align: right;
     font-variant-numeric: tabular-nums;
+}
+
+.report-table .calc-cell {
+    background: #eff6ff;
+    font-weight: 600;
+}
+
+/* Status colors */
+.status-ok {
+    background: #d1fae5;
+    color: #065f46;
+    font-weight: 600;
+}
+
+.status-warning {
+    background: #fef3c7;
+    color: #92400e;
+    font-weight: 600;
+}
+
+.status-error {
+    background: #fee2e2;
+    color: #991b1b;
+    font-weight: 600;
 }
 
 .report-empty {

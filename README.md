@@ -96,10 +96,25 @@ Klik på "💾 Gem Data" for at gemme ændringerne. Data gemmes lokalt i browser
 
 ### 7. Se rapport
 
-Skift til "Se Rapport" fanen for at se en komplet oversigt over alle medarbejdere. Her kan du også:
+Skift til "Se Rapport" fanen for at se en komplet oversigt over alle medarbejdere.
+
+**Rapporten viser:**
+- **Alle SHIFTS data** - Ferie og feriefridage fordelt på perioder
+- **GEOLMS data** - Både total og antal dage holdt
+- **Lønsedel data** - Begge lønsedler
+- **Beregninger:**
+  - Total SHIFTS Ferie
+  - Eget Input Total (GEOLMS + Lønsedler)
+  - **Forskel** - Viser om der er diskrepans mellem SHIFTS og medarbejdernes input
+  - **Status** - Farvekodet status:
+    - 🟢 Grøn = Match (ingen forskel)
+    - 🟡 Gul = SHIFTS har mere end input
+    - 🔴 Rød = Input har mere end SHIFTS
+
+**Funktioner:**
 - Opdatere rapporten med seneste data
 - Klikke på "📅 Se" knappen ved hver medarbejder for at se deres detaljerede Time Off historik
-- Eksportere til CSV fil
+- Eksportere til CSV fil med alle data og beregninger
 
 ## 📊 Datafelter
 

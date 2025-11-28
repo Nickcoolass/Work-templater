@@ -7,20 +7,72 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="container">
-        <header>
+    <!-- Login Screen -->
+    <div id="loginScreen" class="login-screen">
+        <div class="login-container">
             <h1>🏖️ Ferie Kalkulator</h1>
-            <p class="subtitle">Administrer og se medarbejderes feriedage</p>
+            <p class="login-subtitle">Vælg adgangstype</p>
+
+            <div class="login-buttons">
+                <button onclick="showAdminLogin()" class="btn-primary btn-large">🔐 Admin Login</button>
+                <button onclick="showEmployeeLogin()" class="btn-secondary btn-large">👤 Medarbejder Login</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Login Modal -->
+    <div id="adminLoginModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close" onclick="closeAdminLogin()">&times;</span>
+            <h2>Admin Login</h2>
+            <p class="help-text">Indtast brugernavn og adgangskode</p>
+            <input type="text" id="adminUsername" placeholder="Brugernavn" class="login-input" onkeypress="if(event.key==='Enter') document.getElementById('adminPassword').focus()">
+            <input type="password" id="adminPassword" placeholder="Adgangskode" class="login-input" style="margin-top: 10px;" onkeypress="if(event.key==='Enter') adminLogin()">
+            <div class="modal-actions">
+                <button onclick="adminLogin()" class="btn-primary">Login</button>
+                <button onclick="closeAdminLogin()" class="btn-secondary">Annuller</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Employee Login Modal -->
+    <div id="employeeLoginModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close" onclick="closeEmployeeLogin()">&times;</span>
+            <h2>Medarbejder Login</h2>
+            <p class="help-text">Vælg dit navn fra listen</p>
+            <select id="employeeLoginSelect" class="login-input">
+                <option value="">Vælg dit navn...</option>
+            </select>
+            <div class="modal-actions">
+                <button onclick="employeeLogin()" class="btn-primary">Login</button>
+                <button onclick="closeEmployeeLogin()" class="btn-secondary">Annuller</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="container" id="mainApp" style="display: none;">
+        <header>
+            <div class="header-content">
+                <div>
+                    <h1>🏖️ Ferie Kalkulator</h1>
+                    <p class="subtitle">Administrer og se medarbejderes feriedage</p>
+                </div>
+                <div class="user-info">
+                    <span id="userDisplay"></span>
+                    <button onclick="logout()" class="btn-logout">Log ud</button>
+                </div>
+            </div>
         </header>
 
-        <div class="tabs">
+        <div class="tabs" id="tabsContainer">
             <button class="tab-button active" onclick="showTab('input')">Indtast Data</button>
-            <button class="tab-button" onclick="showTab('report')">Se Rapport</button>
+            <button class="tab-button" id="reportTab" onclick="showTab('report')">Se Rapport</button>
         </div>
 
         <!-- Data Input Tab -->
         <div id="input-tab" class="tab-content active">
-            <div class="section">
+            <div class="section" id="importSection" style="display: none;">
                 <h2>📥 Importer Time Off Data</h2>
                 <p class="help-text">Importer CSV/Excel data med kolonner: Employee Name, Time Off Reason, Start Date, End Date</p>
                 <div class="import-container">
@@ -31,12 +83,12 @@
             </div>
 
             <div class="section">
-                <h2>Vælg Medarbejder</h2>
+                <h2 id="selectEmployeeHeader">Vælg Medarbejder</h2>
                 <div class="employee-selector">
                     <select id="employeeSelect" onchange="loadEmployeeData()">
                         <option value="">Vælg medarbejder...</option>
                     </select>
-                    <button onclick="addNewEmployee()" class="btn-secondary">+ Tilføj Ny Medarbejder</button>
+                    <button id="addEmployeeBtn" onclick="addNewEmployee()" class="btn-secondary" style="display: none;">+ Tilføj Ny Medarbejder</button>
                 </div>
             </div>
 
@@ -111,6 +163,28 @@
                         <label>Ferie Lønsedel 2:</label>
                         <input type="number" id="lonsedel_2" step="0.5" oninput="calculateRemaining()">
                     </div>
+                </div>
+
+                <h3 class="section-title">Ferieoverførsel (Udfyld selv)</h3>
+
+                <div class="form-group">
+                    <label>Ønsker du at have overført din rest ferie til næste år, eller udbetalt med marts lønnen? (Maks 5 dage)</label>
+                    <div style="margin-top: 10px;">
+                        <label style="display: inline-flex; align-items: center; margin-right: 20px; font-weight: normal;">
+                            <input type="radio" name="ferieOverforselValg" id="ferieOverforsel_overfør" value="Overfør til næste år" style="width: auto; margin-right: 8px;">
+                            Overfør til næste år
+                        </label>
+                        <label style="display: inline-flex; align-items: center; font-weight: normal;">
+                            <input type="radio" name="ferieOverforselValg" id="ferieOverforsel_udbetal" value="Udbetal med marts løn" style="width: auto; margin-right: 8px;">
+                            Udbetal med marts løn
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Antal dage (Maks 5):</label>
+                    <input type="number" id="ferieOverforselDage" min="0" max="5" step="0.5" placeholder="Indtast antal dage (0-5)">
+                    <span class="help-text">Du kan maksimalt vælge 5 dage</span>
                 </div>
 
                 <h3 class="section-title">📅 Time Off Historik (Importeret Data)</h3>
