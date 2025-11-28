@@ -13,8 +13,30 @@ const ADMIN_PASSWORD = 'Kristina1';
 // Initialize app
 document.addEventListener('DOMContentLoaded', function() {
     loadEmployeesFromStorage();
-    showLoginScreen();
+    initializeEmployeeView();
 });
+
+// Initialize employee view (default view)
+function initializeEmployeeView() {
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('mainApp').style.display = 'block';
+
+    // Hide admin-only elements
+    document.getElementById('importSection').style.display = 'none';
+    document.getElementById('reportTab').style.display = 'none';
+    document.getElementById('addEmployeeBtn').style.display = 'none';
+
+    // Show admin login button in header
+    document.getElementById('adminLoginBtn').style.display = 'inline-block';
+    document.getElementById('userDisplay').style.display = 'none';
+    document.getElementById('logoutBtn').style.display = 'none';
+
+    // Populate employee dropdown
+    populateEmployeeSelect();
+
+    // Set header text
+    document.getElementById('selectEmployeeHeader').textContent = 'Din Profil';
+}
 
 // Login Functions
 function showLoginScreen() {
@@ -40,7 +62,7 @@ function adminLogin() {
     if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
         isAdmin = true;
         currentUserName = 'Administrator';
-        initializeApp();
+        initializeAdminView();
         closeAdminLogin();
     } else {
         showAlert('Forkert brugernavn eller adgangskode!', 'error');
@@ -49,72 +71,27 @@ function adminLogin() {
     }
 }
 
-function showEmployeeLogin() {
-    const select = document.getElementById('employeeLoginSelect');
-    select.innerHTML = '<option value="">Vælg dit navn...</option>';
+function initializeAdminView() {
+    // Show admin-only elements
+    document.getElementById('importSection').style.display = 'block';
+    document.getElementById('reportTab').style.display = 'block';
+    document.getElementById('addEmployeeBtn').style.display = 'inline-block';
 
-    employees.forEach((emp, index) => {
-        const option = document.createElement('option');
-        option.value = index;
-        option.textContent = emp.navn;
-        select.appendChild(option);
-    });
+    // Hide admin login button, show user display and logout
+    document.getElementById('adminLoginBtn').style.display = 'none';
+    document.getElementById('userDisplay').style.display = 'inline-block';
+    document.getElementById('logoutBtn').style.display = 'inline-block';
+    document.getElementById('userDisplay').textContent = '🔐 Administrator';
 
-    document.getElementById('employeeLoginModal').style.display = 'block';
+    // Enable employee select for admin
+    document.getElementById('employeeSelect').disabled = false;
+    document.getElementById('selectEmployeeHeader').textContent = 'Vælg Medarbejder';
+
+    // Refresh report
+    refreshReport();
 }
 
-function closeEmployeeLogin() {
-    document.getElementById('employeeLoginModal').style.display = 'none';
-}
-
-function employeeLogin() {
-    const select = document.getElementById('employeeLoginSelect');
-    const index = select.value;
-
-    if (index === '') {
-        showAlert('Vælg venligst dit navn', 'error');
-        return;
-    }
-
-    isAdmin = false;
-    currentEmployee = employees[index];
-    currentUserName = currentEmployee.navn;
-    initializeApp();
-    closeEmployeeLogin();
-
-    // Automatically select the employee
-    document.getElementById('employeeSelect').value = index;
-    loadEmployeeData();
-}
-
-function initializeApp() {
-    document.getElementById('loginScreen').style.display = 'none';
-    document.getElementById('mainApp').style.display = 'block';
-
-    // Update user display
-    document.getElementById('userDisplay').textContent = isAdmin ? '🔐 Administrator' : `👤 ${currentUserName}`;
-
-    // Show/hide elements based on role
-    if (isAdmin) {
-        document.getElementById('importSection').style.display = 'block';
-        document.getElementById('reportTab').style.display = 'block';
-        document.getElementById('addEmployeeBtn').style.display = 'inline-block';
-        document.getElementById('selectEmployeeHeader').textContent = 'Vælg Medarbejder';
-    } else {
-        document.getElementById('importSection').style.display = 'none';
-        document.getElementById('reportTab').style.display = 'none';
-        document.getElementById('addEmployeeBtn').style.display = 'none';
-        document.getElementById('selectEmployeeHeader').textContent = 'Din Profil';
-
-        // Disable employee select for non-admin
-        document.getElementById('employeeSelect').disabled = true;
-    }
-
-    populateEmployeeSelect();
-    if (isAdmin) {
-        refreshReport();
-    }
-}
+// Old employee login functions removed - now showing employee view directly on load
 
 function logout() {
     if (confirm('Er du sikker på at du vil logge ud?')) {
@@ -125,9 +102,10 @@ function logout() {
 
         // Reset form
         document.getElementById('employeeForm').style.display = 'none';
-        document.getElementById('employeeSelect').disabled = false;
+        document.getElementById('employeeSelect').value = '';
 
-        showLoginScreen();
+        // Return to employee view
+        initializeEmployeeView();
     }
 }
 
@@ -173,25 +151,32 @@ function saveEmployeesToStorage() {
 
 // Load initial data (this should be populated with your SHIFTS data)
 function loadInitialData() {
-    // This is a template - you'll add your actual data here
-    employees = [
-        {
-            navn: "Medarbejder 1",
-            shifts_ferie_1: 10,
-            shifts_ferie_2: 5,
-            shifts_ferie_3: 15,
-            shifts_fridag_1: 2,
-            shifts_fridag_2: 1,
-            shifts_fridag_3: 3,
-            geolms_total: 0,
-            geolms_dates: [],
-            lonsedel_1: 0,
-            lonsedel_2: 0,
-            ferieOverforselValg: '',
-            ferieOverforselDage: 0,
-            timeOffRecords: [] // Array of time off records
-        }
+    // Employee list from Time Off data
+    const employeeNames = [
+        "Isabella Coolass",
+        "Janni Rasmussen",
+        "Kristina Rasmussen",
+        "Maria Frederiksen",
+        "Signe Jensen"
     ];
+
+    employees = employeeNames.map(name => ({
+        navn: name,
+        shifts_ferie_1: 0,
+        shifts_ferie_2: 0,
+        shifts_ferie_3: 0,
+        shifts_fridag_1: 0,
+        shifts_fridag_2: 0,
+        shifts_fridag_3: 0,
+        geolms_total: 0,
+        geolms_dates: [],
+        lonsedel_1: 0,
+        lonsedel_2: 0,
+        ferieOverforselValg: '',
+        ferieOverforselDage: 0,
+        timeOffRecords: []
+    }));
+
     saveEmployeesToStorage();
 }
 

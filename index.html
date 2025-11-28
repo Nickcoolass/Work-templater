@@ -59,8 +59,9 @@
                     <p class="subtitle">Administrer og se medarbejderes feriedage</p>
                 </div>
                 <div class="user-info">
-                    <span id="userDisplay"></span>
-                    <button onclick="logout()" class="btn-logout">Log ud</button>
+                    <button onclick="showAdminLogin()" id="adminLoginBtn" class="btn-admin-login" style="display: none;">🔐 Admin Login</button>
+                    <span id="userDisplay" style="display: none;"></span>
+                    <button onclick="logout()" id="logoutBtn" class="btn-logout" style="display: none;">Log ud</button>
                 </div>
             </div>
         </header>
