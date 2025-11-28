@@ -433,39 +433,6 @@ function saveEmployeeData() {
     saveEmployeesToStorage();
     showAlert('Data gemt!', 'success');
     calculateRemaining();
-
-    // Send email notification
-    sendEmailNotification(employees[index]);
-}
-
-// Send email notification when employee saves data
-function sendEmailNotification(employee) {
-    // Using mailto link for now - can be replaced with EmailJS or Power Automate
-    const subject = encodeURIComponent(`Ferie Data Indsendt: ${employee.navn}`);
-    const body = encodeURIComponent(`
-Medarbejder: ${employee.navn}
-Tidspunkt: ${new Date(employee.lastSubmitted).toLocaleString('da-DK')}
-
-Data gemt:
-- GEOLMS Total: ${employee.geolms_total}
-- Lønsedel 1: ${employee.lonsedel_1}
-- Lønsedel 2: ${employee.lonsedel_2}
-- Ferieoverførsel: ${employee.ferieOverforselValg || 'Ikke valgt'} (${employee.ferieOverforselDage} dage)
-
-Se fuld rapport i systemet.
-    `.trim());
-
-    // For production: Use EmailJS or Power Automate
-    // For now, log the notification
-    console.log('Email notification would be sent to nsst@novonordisk.com:', {
-        employee: employee.navn,
-        timestamp: employee.lastSubmitted
-    });
-
-    // Uncomment to open email client (requires user action)
-    // window.open(`mailto:nsst@novonordisk.com?subject=${subject}&body=${body}`);
-
-    // TODO: Replace with EmailJS or Power Automate for automatic emails
 }
 
 // Clear form
