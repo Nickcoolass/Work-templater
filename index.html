@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ferie Kalkulator</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🏖️ Ferie Kalkulator</h1>
+            <p class="subtitle">Administrer og se medarbejderes feriedage</p>
+        </header>
+
+        <div class="tabs">
+            <button class="tab-button active" onclick="showTab('input')">Indtast Data</button>
+            <button class="tab-button" onclick="showTab('report')">Se Rapport</button>
+        </div>
+
+        <!-- Data Input Tab -->
+        <div id="input-tab" class="tab-content active">
+            <div class="section">
+                <h2>Vælg Medarbejder</h2>
+                <div class="employee-selector">
+                    <select id="employeeSelect" onchange="loadEmployeeData()">
+                        <option value="">Vælg medarbejder...</option>
+                    </select>
+                    <button onclick="addNewEmployee()" class="btn-secondary">+ Tilføj Ny Medarbejder</button>
+                </div>
+            </div>
+
+            <div id="employeeForm" class="section" style="display: none;">
+                <h2>Medarbejder Information</h2>
+
+                <div class="form-group">
+                    <label>Navn:</label>
+                    <input type="text" id="navn" readonly class="readonly-field">
+                </div>
+
+                <h3 class="section-title">Ferie i SHIFTS (Forudfyldt)</h3>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Ferie i SHIFTS (1/1 - 31/8 - 2025):</label>
+                        <input type="number" id="shifts_ferie_1" step="0.5" readonly class="readonly-field">
+                    </div>
+                    <div class="form-group">
+                        <label>Ferie i SHIFTS (1/9 - 30/11 - 2025):</label>
+                        <input type="number" id="shifts_ferie_2" step="0.5" readonly class="readonly-field">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Ferie i SHIFTS (1/12 - 2025 og frem):</label>
+                    <input type="number" id="shifts_ferie_3" step="0.5" readonly class="readonly-field">
+                </div>
+
+                <h3 class="section-title">Feriefridage i SHIFTS (Forudfyldt)</h3>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Feriefridage i SHIFTS (1/1 - 31/8 - 2025):</label>
+                        <input type="number" id="shifts_fridag_1" step="0.5" readonly class="readonly-field">
+                    </div>
+                    <div class="form-group">
+                        <label>Feriefridage i SHIFTS (1/9 - 30/11 - 2025):</label>
+                        <input type="number" id="shifts_fridag_2" step="0.5" readonly class="readonly-field">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Feriefridage i SHIFTS (1/12 - 2025 og frem):</label>
+                    <input type="number" id="shifts_fridag_3" step="0.5" readonly class="readonly-field">
+                </div>
+
+                <h3 class="section-title">GEOLMS Data (Udfyld selv)</h3>
+
+                <div class="form-group">
+                    <label>Ferie i GEOLMS i alt:</label>
+                    <input type="number" id="geolms_total" step="0.5" oninput="calculateRemaining()">
+                    <span class="help-text">Antal feriedage registreret i GEOLMS systemet</span>
+                </div>
+
+                <div class="form-group">
+                    <label>Ferie i GEOLMS - Datoer holdt (1/1-2025 til nu):</label>
+                    <div id="calendar-container" class="calendar-container">
+                        <button type="button" onclick="openCalendar()" class="btn-secondary">📅 Vælg Datoer</button>
+                        <div id="selected-dates" class="selected-dates"></div>
+                    </div>
+                </div>
+
+                <h3 class="section-title">Lønsedler (Udfyld selv)</h3>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Ferie Lønsedel 1:</label>
+                        <input type="number" id="lonsedel_1" step="0.5" oninput="calculateRemaining()">
+                    </div>
+                    <div class="form-group">
+                        <label>Ferie Lønsedel 2:</label>
+                        <input type="number" id="lonsedel_2" step="0.5" oninput="calculateRemaining()">
+                    </div>
+                </div>
+
+                <div class="calculation-summary">
+                    <h3>Beregning</h3>
+                    <div class="summary-row">
+                        <span>Total SHIFTS ferie:</span>
+                        <span id="total_shifts_ferie" class="value">0</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Total SHIFTS feriefridage:</span>
+                        <span id="total_shifts_fridag" class="value">0</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>GEOLMS datoer holdt:</span>
+                        <span id="total_geolms_dates" class="value">0</span>
+                    </div>
+                    <div class="summary-row highlight">
+                        <span><strong>Estimeret ferie tilbage:</strong></span>
+                        <span id="remaining_vacation" class="value"><strong>-</strong></span>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button onclick="saveEmployeeData()" class="btn-primary">💾 Gem Data</button>
+                    <button onclick="clearForm()" class="btn-secondary">🔄 Nulstil</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Report Tab -->
+        <div id="report-tab" class="tab-content">
+            <div class="section">
+                <h2>Ferieoversigt - Alle Medarbejdere</h2>
+                <div class="report-actions">
+                    <button onclick="refreshReport()" class="btn-primary">🔄 Opdater Rapport</button>
+                    <button onclick="exportToCSV()" class="btn-secondary">📥 Eksporter til CSV</button>
+                </div>
+                <div id="report-container" class="report-container">
+                    <!-- Report will be generated here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Calendar Modal -->
+        <div id="calendarModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeCalendar()">&times;</span>
+                <h2>Vælg Feriedatoer</h2>
+                <div id="calendar"></div>
+                <div class="modal-actions">
+                    <button onclick="saveCalendarDates()" class="btn-primary">Gem Datoer</button>
+                    <button onclick="closeCalendar()" class="btn-secondary">Annuller</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
