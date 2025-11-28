@@ -4,11 +4,13 @@ En simpel web-applikation til at administrere og beregne medarbejderes feriedage
 
 ## 📋 Funktioner
 
+- **Time Off Import**: Importer feriedata fra CSV/Excel filer eller ved at indsætte data direkte
 - **Datainput**: Indtast feriedata fra forskellige kilder
 - **Forudfyldt SHIFTS data**: Data fra SHIFTS systemet kan forudfyldes
 - **Kalender visning**: Vælg specifikke feriedatoer med en intuitiv kalender
 - **Automatisk beregning**: Beregn automatisk resterende feriedage
-- **Rapport**: Se en komplet oversigt over alle medarbejderes feriedata
+- **Time Off Oversigt**: Se detaljeret oversigt over alle feriedatoer per medarbejder, grupperet efter type
+- **Rapport**: Se en komplet oversigt over alle medarbejderes feriedata med knapper til at se Time Off detaljer
 - **Export**: Eksporter data til CSV format
 
 ## 🚀 Sådan bruges applikationen
@@ -17,7 +19,29 @@ En simpel web-applikation til at administrere og beregne medarbejderes feriedage
 
 Åbn `index.html` i din webbrowser (Chrome, Firefox, Safari, eller Edge).
 
-### 2. Forudfyld SHIFTS data
+### 2. Importer Time Off Data (Valgfrit)
+
+Hvis du har historiske feriedata, kan du importere dem:
+
+**Metode 1: Upload CSV fil**
+1. Klik på "📂 Vælg CSV Fil" knappen
+2. Vælg din CSV/Excel fil med kolonnerne: Employee Name, Time Off Reason, Start Date, End Date
+3. Data importeres automatisk
+
+**Metode 2: Indsæt data direkte**
+1. Åbn dit Excel ark med Time Off data
+2. Marker og kopier alle rækker (inkl. header)
+3. Klik på "📋 Indsæt Data" knappen
+4. Indsæt dataene i tekstfeltet
+5. Klik "📥 Importer"
+
+**Påkrævet format:**
+- **Employee Name** / Time Off Employee Name: Medarbejderens navn
+- **Time Off Reason**: Årsag (f.eks. "Ferie", "Feriefridag", etc.)
+- **Start Date** / Time Off Start Weekday: Start dato
+- **End Date** / Time Off Time Rounded: Slut dato
+
+### 3. Forudfyld SHIFTS data
 
 Hvis du har data fra SHIFTS systemet, skal du redigere `app.js` filen og erstatte example data i `loadInitialData()` funktionen:
 
@@ -43,12 +67,12 @@ function loadInitialData() {
 }
 ```
 
-### 3. Tilføj eller vælg medarbejder
+### 4. Tilføj eller vælg medarbejder
 
 - Vælg en eksisterende medarbejder fra dropdown menuen
 - Eller klik på "+ Tilføj Ny Medarbejder" for at oprette en ny
 
-### 4. Udfyld data
+### 5. Udfyld data
 
 **SHIFTS data** (forudfyldt - kan ikke redigeres i appen):
 - Ferie i SHIFTS for forskellige perioder
@@ -62,14 +86,19 @@ function loadInitialData() {
 - Ferie Lønsedel 1
 - Ferie Lønsedel 2
 
-### 5. Gem data
+**Time Off Historik** (vises automatisk efter import):
+- Se alle importerede feriedatoer grupperet efter type
+- Klik på en gruppe for at udvide og se detaljer
+
+### 6. Gem data
 
 Klik på "💾 Gem Data" for at gemme ændringerne. Data gemmes lokalt i browserens localStorage.
 
-### 6. Se rapport
+### 7. Se rapport
 
 Skift til "Se Rapport" fanen for at se en komplet oversigt over alle medarbejdere. Her kan du også:
 - Opdatere rapporten med seneste data
+- Klikke på "📅 Se" knappen ved hver medarbejder for at se deres detaljerede Time Off historik
 - Eksportere til CSV fil
 
 ## 📊 Datafelter

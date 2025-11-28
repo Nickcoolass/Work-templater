@@ -21,6 +21,16 @@
         <!-- Data Input Tab -->
         <div id="input-tab" class="tab-content active">
             <div class="section">
+                <h2>📥 Importer Time Off Data</h2>
+                <p class="help-text">Importer CSV/Excel data med kolonner: Employee Name, Time Off Reason, Start Date, End Date</p>
+                <div class="import-container">
+                    <input type="file" id="fileInput" accept=".csv,.txt" style="display: none;" onchange="handleFileUpload(event)">
+                    <button onclick="document.getElementById('fileInput').click()" class="btn-primary">📂 Vælg CSV Fil</button>
+                    <button onclick="showPasteDialog()" class="btn-secondary">📋 Indsæt Data</button>
+                </div>
+            </div>
+
+            <div class="section">
                 <h2>Vælg Medarbejder</h2>
                 <div class="employee-selector">
                     <select id="employeeSelect" onchange="loadEmployeeData()">
@@ -103,6 +113,11 @@
                     </div>
                 </div>
 
+                <h3 class="section-title">📅 Time Off Historik (Importeret Data)</h3>
+                <div id="timeOffHistory" class="time-off-history">
+                    <p class="help-text">Ingen Time Off data importeret endnu</p>
+                </div>
+
                 <div class="calculation-summary">
                     <h3>Beregning</h3>
                     <div class="summary-row">
@@ -153,6 +168,20 @@
                 <div class="modal-actions">
                     <button onclick="saveCalendarDates()" class="btn-primary">Gem Datoer</button>
                     <button onclick="closeCalendar()" class="btn-secondary">Annuller</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Paste Data Modal -->
+        <div id="pasteModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closePasteDialog()">&times;</span>
+                <h2>Indsæt Time Off Data</h2>
+                <p class="help-text">Kopier data fra Excel og indsæt det herunder (inkl. header række)</p>
+                <textarea id="pasteArea" rows="15" style="width: 100%; padding: 10px; font-family: monospace; border: 2px solid var(--border-color); border-radius: 8px;"></textarea>
+                <div class="modal-actions">
+                    <button onclick="processPastedData()" class="btn-primary">📥 Importer</button>
+                    <button onclick="closePasteDialog()" class="btn-secondary">Annuller</button>
                 </div>
             </div>
         </div>

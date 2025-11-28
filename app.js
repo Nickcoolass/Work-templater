@@ -2,6 +2,7 @@
 let employees = [];
 let currentEmployee = null;
 let selectedDates = [];
+let timeOffData = []; // Store imported time off data
 
 // Initialize app
 document.addEventListener('DOMContentLoaded', function() {
@@ -65,10 +66,87 @@ function loadInitialData() {
             geolms_total: 0,
             geolms_dates: [],
             lonsedel_1: 0,
-            lonsedel_2: 0
+            lonsedel_2: 0,
+            timeOffRecords: [] // Array of time off records
         }
     ];
     saveEmployeesToStorage();
+}
+
+// Import Time Off Data from CSV/Excel
+function importTimeOffData(csvText) {
+    const lines = csvText.trim().split('\n');
+    const headers = lines[0].split(/[,;\t]/).map(h => h.trim());
+
+    // Find column indexes
+    const nameIdx = headers.findIndex(h => h.toLowerCase().includes('name') || h.toLowerCase().includes('navn'));
+    const reasonIdx = headers.findIndex(h => h.toLowerCase().includes('reason') || h.toLowerCase().includes('årsag'));
+    const startIdx = headers.findIndex(h => h.toLowerCase().includes('start date'));
+    const endIdx = headers.findIndex(h => h.toLowerCase().includes('end date'));
+
+    // Group by employee
+    const employeeTimeOff = {};
+
+    for (let i = 1; i < lines.length; i++) {
+        const cols = lines[i].split(/[,;\t]/).map(c => c.trim());
+        if (cols.length < 4) continue;
+
+        const name = cols[nameIdx];
+        const reason = cols[reasonIdx];
+        const startDate = cols[startIdx];
+        const endDate = cols[endIdx];
+
+        if (!name) continue;
+
+        if (!employeeTimeOff[name]) {
+            employeeTimeOff[name] = [];
+        }
+
+        employeeTimeOff[name].push({
+            reason: reason,
+            startDate: startDate,
+            endDate: endDate,
+            days: calculateDaysBetween(startDate, endDate)
+        });
+    }
+
+    // Update employees with time off data
+    Object.keys(employeeTimeOff).forEach(name => {
+        let emp = employees.find(e => e.navn === name);
+        if (!emp) {
+            // Create new employee if not exists
+            emp = {
+                navn: name,
+                shifts_ferie_1: 0,
+                shifts_ferie_2: 0,
+                shifts_ferie_3: 0,
+                shifts_fridag_1: 0,
+                shifts_fridag_2: 0,
+                shifts_fridag_3: 0,
+                geolms_total: 0,
+                geolms_dates: [],
+                lonsedel_1: 0,
+                lonsedel_2: 0,
+                timeOffRecords: []
+            };
+            employees.push(emp);
+        }
+        emp.timeOffRecords = employeeTimeOff[name];
+    });
+
+    saveEmployeesToStorage();
+    populateEmployeeSelect();
+    refreshReport();
+    showAlert('Time Off data importeret!', 'success');
+}
+
+// Calculate days between two dates
+function calculateDaysBetween(start, end) {
+    const startDate = new Date(start);
+    const endDate = new Date(end);
+    const diffTime = Math.abs(endDate - startDate);
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1; // +1 to include both start and end day
+    return diffDays;
 }
 
 // Populate employee select dropdown
@@ -113,6 +191,9 @@ function loadEmployeeData() {
     selectedDates = currentEmployee.geolms_dates || [];
     displaySelectedDates();
 
+    // Display Time Off history
+    displayTimeOffHistory();
+
     // Calculate totals
     calculateRemaining();
 }
@@ -132,7 +213,8 @@ function addNewEmployee() {
             geolms_total: 0,
             geolms_dates: [],
             lonsedel_1: 0,
-            lonsedel_2: 0
+            lonsedel_2: 0,
+            timeOffRecords: []
         };
 
         employees.push(newEmployee);
@@ -371,12 +453,15 @@ function refreshReport() {
     html += '<th class="number">Lønsedel 2</th>';
     html += '<th class="number">Total SHIFTS Ferie</th>';
     html += '<th class="number">Estimeret Tilbage</th>';
+    html += '<th>Time Off</th>';
     html += '</tr></thead><tbody>';
 
-    employees.forEach(emp => {
+    employees.forEach((emp, idx) => {
         const total_shifts = (emp.shifts_ferie_1 || 0) + (emp.shifts_ferie_2 || 0) + (emp.shifts_ferie_3 || 0);
         const geolms_holdt = (emp.geolms_dates || []).length;
         const remaining = total_shifts - geolms_holdt;
+        const hasTimeOff = emp.timeOffRecords && emp.timeOffRecords.length > 0;
+        const timeOffCount = hasTimeOff ? emp.timeOffRecords.length : 0;
 
         html += '<tr>';
         html += `<td>${emp.navn}</td>`;
@@ -392,6 +477,7 @@ function refreshReport() {
         html += `<td class="number">${(emp.lonsedel_2 || 0).toFixed(1)}</td>`;
         html += `<td class="number"><strong>${total_shifts.toFixed(1)}</strong></td>`;
         html += `<td class="number"><strong>${remaining.toFixed(1)}</strong></td>`;
+        html += `<td>${hasTimeOff ? `<button onclick="showEmployeeTimeOff(${idx})" class="btn-view-small">📅 Se (${timeOffCount})</button>` : '-'}</td>`;
         html += '</tr>';
     });
 
@@ -462,8 +548,192 @@ function showAlert(message, type = 'success') {
 
 // Close modal when clicking outside
 window.onclick = function(event) {
-    const modal = document.getElementById('calendarModal');
-    if (event.target === modal) {
+    const calendarModal = document.getElementById('calendarModal');
+    const pasteModal = document.getElementById('pasteModal');
+    const customModal = document.getElementById('customModal');
+
+    if (event.target === calendarModal) {
         closeCalendar();
+    }
+    if (event.target === pasteModal) {
+        closePasteDialog();
+    }
+    if (event.target === customModal) {
+        closeCustomModal();
+    }
+}
+
+// Import functions
+function handleFileUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const contents = e.target.result;
+        importTimeOffData(contents);
+    };
+    reader.readAsText(file);
+}
+
+function showPasteDialog() {
+    document.getElementById('pasteModal').style.display = 'block';
+    document.getElementById('pasteArea').value = '';
+}
+
+function closePasteDialog() {
+    document.getElementById('pasteModal').style.display = 'none';
+}
+
+function processPastedData() {
+    const data = document.getElementById('pasteArea').value;
+    if (!data.trim()) {
+        showAlert('Ingen data indtastet', 'error');
+        return;
+    }
+    importTimeOffData(data);
+    closePasteDialog();
+}
+
+// Display Time Off History for current employee
+function displayTimeOffHistory() {
+    const container = document.getElementById('timeOffHistory');
+
+    if (!currentEmployee || !currentEmployee.timeOffRecords || currentEmployee.timeOffRecords.length === 0) {
+        container.innerHTML = '<p class="help-text">Ingen Time Off data importeret endnu</p>';
+        return;
+    }
+
+    // Group by reason
+    const grouped = {};
+    currentEmployee.timeOffRecords.forEach(record => {
+        if (!grouped[record.reason]) {
+            grouped[record.reason] = [];
+        }
+        grouped[record.reason].push(record);
+    });
+
+    let html = '';
+    Object.keys(grouped).forEach(reason => {
+        const records = grouped[reason];
+        const totalDays = records.reduce((sum, r) => sum + r.days, 0);
+
+        html += `<div class="time-off-group">`;
+        html += `<div class="time-off-header" onclick="toggleTimeOffDetails('${reason.replace(/'/g, "\\'")}')">`;
+        html += `<span><strong>${reason}</strong> - ${totalDays} dage</span>`;
+        html += `<span class="toggle-icon">▼</span>`;
+        html += `</div>`;
+        html += `<div class="time-off-details" id="timeoff-${reason.replace(/[^a-zA-Z0-9]/g, '_')}" style="display: none;">`;
+        html += `<table class="time-off-table">`;
+        html += `<tr><th>Start</th><th>Slut</th><th>Dage</th></tr>`;
+
+        records.forEach(record => {
+            const startFormatted = formatDate(record.startDate);
+            const endFormatted = formatDate(record.endDate);
+            html += `<tr>`;
+            html += `<td>${startFormatted}</td>`;
+            html += `<td>${endFormatted}</td>`;
+            html += `<td class="number">${record.days}</td>`;
+            html += `</tr>`;
+        });
+
+        html += `</table>`;
+        html += `</div>`;
+        html += `</div>`;
+    });
+
+    container.innerHTML = html;
+}
+
+function toggleTimeOffDetails(reason) {
+    const id = 'timeoff-' + reason.replace(/[^a-zA-Z0-9]/g, '_');
+    const element = document.getElementById(id);
+    if (element) {
+        element.style.display = element.style.display === 'none' ? 'block' : 'none';
+    }
+}
+
+function formatDate(dateStr) {
+    if (!dateStr) return '';
+    const date = new Date(dateStr);
+    if (isNaN(date)) return dateStr;
+    return date.toLocaleDateString('da-DK', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+    });
+}
+
+// Show Time Off for an employee in modal
+function showEmployeeTimeOff(employeeIdx) {
+    const emp = employees[employeeIdx];
+    if (!emp || !emp.timeOffRecords || emp.timeOffRecords.length === 0) return;
+
+    // Group by reason
+    const grouped = {};
+    let totalDays = 0;
+    emp.timeOffRecords.forEach(record => {
+        if (!grouped[record.reason]) {
+            grouped[record.reason] = [];
+        }
+        grouped[record.reason].push(record);
+        totalDays += record.days;
+    });
+
+    let html = `<h3>${emp.navn} - Time Off Oversigt</h3>`;
+    html += `<p style="margin-bottom: 20px;"><strong>Total dage:</strong> ${totalDays}</p>`;
+
+    Object.keys(grouped).forEach(reason => {
+        const records = grouped[reason];
+        const reasonDays = records.reduce((sum, r) => sum + r.days, 0);
+
+        html += `<div class="time-off-group">`;
+        html += `<div class="time-off-header-modal">`;
+        html += `<strong>${reason}</strong> - ${reasonDays} dage`;
+        html += `</div>`;
+        html += `<table class="time-off-table">`;
+        html += `<tr><th>Start Dato</th><th>Slut Dato</th><th>Dage</th></tr>`;
+
+        records.forEach(record => {
+            html += `<tr>`;
+            html += `<td>${formatDate(record.startDate)}</td>`;
+            html += `<td>${formatDate(record.endDate)}</td>`;
+            html += `<td class="number">${record.days}</td>`;
+            html += `</tr>`;
+        });
+
+        html += `</table>`;
+        html += `</div>`;
+    });
+
+    // Show in alert-style modal
+    showCustomModal('Time Off Detaljer', html);
+}
+
+// Custom modal for displaying content
+function showCustomModal(title, content) {
+    // Create modal if doesn't exist
+    let modal = document.getElementById('customModal');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'customModal';
+        modal.className = 'modal';
+        modal.innerHTML = `
+            <div class="modal-content" style="max-width: 800px;">
+                <span class="close" onclick="closeCustomModal()">&times;</span>
+                <div id="customModalContent"></div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+    }
+
+    document.getElementById('customModalContent').innerHTML = `<h2>${title}</h2>` + content;
+    modal.style.display = 'block';
+}
+
+function closeCustomModal() {
+    const modal = document.getElementById('customModal');
+    if (modal) {
+        modal.style.display = 'none';
     }
 }

@@ -510,3 +510,94 @@ header h1 {
     color: #991b1b;
     border-left: 4px solid var(--danger-color);
 }
+
+/* Import Container */
+.import-container {
+    display: flex;
+    gap: 15px;
+    margin-top: 15px;
+}
+
+/* Time Off History */
+.time-off-history {
+    margin-top: 10px;
+}
+
+.time-off-group {
+    margin-bottom: 15px;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.time-off-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 15px;
+    background: #f8fafc;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.time-off-header:hover {
+    background: #e2e8f0;
+}
+
+.toggle-icon {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    transition: transform 0.3s ease;
+}
+
+.time-off-details {
+    padding: 15px;
+    background: white;
+}
+
+.time-off-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.time-off-table th,
+.time-off-table td {
+    padding: 8px;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.time-off-table th {
+    font-weight: 600;
+    background: #f8fafc;
+}
+
+.time-off-table td.number {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+
+.time-off-header-modal {
+    padding: 10px 15px;
+    background: #f8fafc;
+    border-radius: 8px 8px 0 0;
+    font-size: 1rem;
+    margin-bottom: -1px;
+}
+
+/* Small view button */
+.btn-view-small {
+    padding: 6px 12px;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-view-small:hover {
+    background: #1d4ed8;
+    transform: translateY(-1px);
+}
