@@ -698,3 +698,50 @@ header h1 {
     background: #1d4ed8;
     transform: translateY(-1px);
 }
+
+/* Missing Submissions Report */
+.missing-report h2 {
+    margin-bottom: 25px;
+    color: var(--text-color);
+}
+
+.stats-summary {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 30px;
+    justify-content: center;
+}
+
+.stat-box {
+    background: var(--background-color);
+    padding: 20px 30px;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: var(--shadow);
+    min-width: 120px;
+}
+
+.stat-box strong {
+    display: block;
+    font-size: 2rem;
+    color: var(--primary-color);
+    margin-bottom: 5px;
+}
+
+.stat-box.stat-success strong {
+    color: var(--success-color);
+}
+
+.stat-box.stat-warning strong {
+    color: #f59e0b;
+}
+
+.success-message {
+    background: #d1fae5;
+    color: #065f46;
+    padding: 20px;
+    border-radius: 12px;
+    text-align: center;
+    font-size: 1.1rem;
+    font-weight: 500;
+}

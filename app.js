@@ -151,13 +151,53 @@ function saveEmployeesToStorage() {
 
 // Load initial data (this should be populated with your SHIFTS data)
 function loadInitialData() {
-    // Employee list from Time Off data
+    // Employee list from data.xlsx (45 employees)
     const employeeNames = [
-        "Isabella Coolass",
-        "Janni Rasmussen",
-        "Kristina Rasmussen",
-        "Maria Frederiksen",
-        "Signe Jensen"
+        "AKLA (Allan Kjær Larsen)",
+        "ANND (Andreas Nielsen Dideriksen)",
+        "ATOZ (Atif Haroon)",
+        "AUUA (Abdulruhman Alshaabni)",
+        "CVTN (Christian Valentin)",
+        "DNKQ (Daniel Nørlev Kristensen)",
+        "EKXL (Kasper Lykke)",
+        "FCHZ (Christopher Larsen)",
+        "FHYX (Fahad Hussain)",
+        "GFZD (Gregers Fritzen Due)",
+        "GMDQ (Mohammad Al-Shaabny)",
+        "HHLB (Hannah Helena Bidstrup)",
+        "HMSG (Martin Stage)",
+        "JHNV (Jan Henrik Vørts)",
+        "JWGH (Jim Wagner Hansen)",
+        "MJTV (Martin Thaulov)",
+        "NSST (Nicholas Sutherland Strang)",
+        "OFMH (Mostafa Muayad Hadi)",
+        "OKYR (Okan Yildirim)",
+        "OMNP (Arisara Moonprom)",
+        "OWAL (Asger Louv)",
+        "PLRK (Philip Lærke)",
+        "PLZN (Paulius Zilinskas)",
+        "PWNR (Patrick Noer)",
+        "QAXL (Anders Ulrich Larsen)",
+        "QEAW (Alexander Weikop)",
+        "QXMP (Mandeep Singh Phull)",
+        "QYAA (Alia Birch Andersen)",
+        "QZEH (Jan Vagner Hansen)",
+        "RYLS (Rasmus Lave Schulz)",
+        "SQEB (Søren Bregengaard)",
+        "STZE (Stig Erbs)",
+        "TZHP (Thim Hintze Pedersen)",
+        "URJN (Rasmus Jensen)",
+        "VEOI (Amir Ali Soghir)",
+        "WHTL (Christian Nylander Larsen)",
+        "WKPV (Kasper Smidt)",
+        "WTVZ (Theis Eskildsen)",
+        "YBAQ (Ahmad Alshaabni)",
+        "YDCE (Anders Christensen)",
+        "YZDR (Yusuf Abdikarim)",
+        "ZFBJ (Frederik Bjarnøe)",
+        "ZINE (Mathias Christopher Nielsen)",
+        "ZKAB (Ken Albiniussen)",
+        "ZNKW (Nikolas Olsen)"
     ];
 
     employees = employeeNames.map(name => ({
@@ -174,7 +214,9 @@ function loadInitialData() {
         lonsedel_2: 0,
         ferieOverforselValg: '',
         ferieOverforselDage: 0,
-        timeOffRecords: []
+        timeOffRecords: [],
+        hasSubmitted: false, // Track if employee has submitted data
+        lastSubmitted: null  // Track when they last submitted
     }));
 
     saveEmployeesToStorage();
@@ -236,7 +278,9 @@ function importTimeOffData(csvText) {
                 lonsedel_2: 0,
                 ferieOverforselValg: '',
                 ferieOverforselDage: 0,
-                timeOffRecords: []
+                timeOffRecords: [],
+                hasSubmitted: false,
+                lastSubmitted: null
             };
             employees.push(emp);
         }
@@ -338,7 +382,9 @@ function addNewEmployee() {
             lonsedel_2: 0,
             ferieOverforselValg: '',
             ferieOverforselDage: 0,
-            timeOffRecords: []
+            timeOffRecords: [],
+            hasSubmitted: false,
+            lastSubmitted: null
         };
 
         employees.push(newEmployee);
@@ -380,9 +426,46 @@ function saveEmployeeData() {
         employees[index].ferieOverforselDage = dage;
     }
 
+    // Mark as submitted with timestamp
+    employees[index].hasSubmitted = true;
+    employees[index].lastSubmitted = new Date().toISOString();
+
     saveEmployeesToStorage();
     showAlert('Data gemt!', 'success');
     calculateRemaining();
+
+    // Send email notification
+    sendEmailNotification(employees[index]);
+}
+
+// Send email notification when employee saves data
+function sendEmailNotification(employee) {
+    // Using mailto link for now - can be replaced with EmailJS or Power Automate
+    const subject = encodeURIComponent(`Ferie Data Indsendt: ${employee.navn}`);
+    const body = encodeURIComponent(`
+Medarbejder: ${employee.navn}
+Tidspunkt: ${new Date(employee.lastSubmitted).toLocaleString('da-DK')}
+
+Data gemt:
+- GEOLMS Total: ${employee.geolms_total}
+- Lønsedel 1: ${employee.lonsedel_1}
+- Lønsedel 2: ${employee.lonsedel_2}
+- Ferieoverførsel: ${employee.ferieOverforselValg || 'Ikke valgt'} (${employee.ferieOverforselDage} dage)
+
+Se fuld rapport i systemet.
+    `.trim());
+
+    // For production: Use EmailJS or Power Automate
+    // For now, log the notification
+    console.log('Email notification would be sent to nsst@novonordisk.com:', {
+        employee: employee.navn,
+        timestamp: employee.lastSubmitted
+    });
+
+    // Uncomment to open email client (requires user action)
+    // window.open(`mailto:nsst@novonordisk.com?subject=${subject}&body=${body}`);
+
+    // TODO: Replace with EmailJS or Power Automate for automatic emails
 }
 
 // Clear form
@@ -677,6 +760,59 @@ function refreshReport() {
     html += '</tbody></table>';
     html += '</div>';
     container.innerHTML = html;
+}
+
+// Show report of employees who haven't submitted data
+function showMissingSubmissionsReport() {
+    const notSubmitted = employees.filter(emp => !emp.hasSubmitted);
+    const submitted = employees.filter(emp => emp.hasSubmitted);
+
+    let html = '<div class="missing-report">';
+    html += `<h2>📊 Indsendelsesrapport</h2>`;
+    html += `<div class="stats-summary">`;
+    html += `<div class="stat-box stat-success"><strong>${submitted.length}</strong><br>Indsendt</div>`;
+    html += `<div class="stat-box stat-warning"><strong>${notSubmitted.length}</strong><br>Mangler</div>`;
+    html += `<div class="stat-box"><strong>${employees.length}</strong><br>I alt</div>`;
+    html += `</div>`;
+
+    if (notSubmitted.length > 0) {
+        html += `<h3 style="color: #ef4444; margin-top: 30px;">⚠️ Medarbejdere der ikke har indsendt data (${notSubmitted.length})</h3>`;
+        html += `<table class="report-table" style="margin-top: 15px;">`;
+        html += `<thead><tr><th style="text-align: left;">Navn</th></tr></thead><tbody>`;
+
+        notSubmitted.forEach(emp => {
+            html += `<tr><td>${emp.navn}</td></tr>`;
+        });
+
+        html += `</tbody></table>`;
+    } else {
+        html += `<p class="success-message" style="margin-top: 30px;">✅ Alle medarbejdere har indsendt deres data!</p>`;
+    }
+
+    if (submitted.length > 0) {
+        html += `<h3 style="color: #10b981; margin-top: 30px;">✅ Medarbejdere der har indsendt data (${submitted.length})</h3>`;
+        html += `<table class="report-table" style="margin-top: 15px;">`;
+        html += `<thead><tr><th style="text-align: left;">Navn</th><th>Indsendt</th></tr></thead><tbody>`;
+
+        submitted
+            .sort((a, b) => new Date(b.lastSubmitted) - new Date(a.lastSubmitted))
+            .forEach(emp => {
+                const date = new Date(emp.lastSubmitted).toLocaleString('da-DK', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+                html += `<tr><td>${emp.navn}</td><td>${date}</td></tr>`;
+            });
+
+        html += `</tbody></table>`;
+    }
+
+    html += `</div>`;
+
+    showCustomModal('Indsendelsesrapport', html);
 }
 
 // Export to CSV
