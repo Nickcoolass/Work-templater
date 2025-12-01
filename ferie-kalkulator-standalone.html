@@ -1,0 +1,2180 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ferie Kalkulator</title>
+    <style>
+:root {
+    --primary-color: #2563eb;
+    --secondary-color: #64748b;
+    --success-color: #10b981;
+    --danger-color: #ef4444;
+    --background-color: #f8fafc;
+    --card-background: #ffffff;
+    --text-color: #1e293b;
+    --text-secondary: #64748b;
+    --border-color: #e2e8f0;
+    --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 40px;
+    padding: 30px 0;
+    background: linear-gradient(135deg, var(--primary-color) 0%, #1d4ed8 100%);
+    color: white;
+    border-radius: 12px;
+    box-shadow: var(--shadow-lg);
+}
+
+header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+}
+
+.subtitle {
+    font-size: 1.1rem;
+    opacity: 0.9;
+}
+
+.login-subtitle {
+    font-size: 1.1rem;
+    opacity: 0.8;
+    margin-bottom: 30px;
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.user-info span {
+    font-size: 1rem;
+    font-weight: 500;
+    opacity: 0.95;
+}
+
+/* Login Screen */
+.login-screen {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, var(--primary-color) 0%, #1d4ed8 100%);
+}
+
+.login-container {
+    background: white;
+    padding: 50px;
+    border-radius: 12px;
+    box-shadow: var(--shadow-lg);
+    max-width: 500px;
+    width: 90%;
+    text-align: center;
+}
+
+.login-container h1 {
+    color: var(--primary-color);
+    margin-bottom: 10px;
+}
+
+.login-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.btn-large {
+    padding: 18px 36px;
+    font-size: 1.1rem;
+}
+
+.login-input {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 1rem;
+    margin-bottom: 10px;
+}
+
+.login-input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+
+.btn-admin-login {
+    padding: 10px 20px;
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn-admin-login:hover {
+    background: rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.8);
+    transform: translateY(-2px);
+}
+
+.btn-logout {
+    padding: 10px 20px;
+    background: rgba(239, 68, 68, 0.9);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn-logout:hover {
+    background: rgba(239, 68, 68, 1);
+    transform: translateY(-2px);
+}
+
+/* Tabs */
+.tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 30px;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.tab-button {
+    padding: 12px 24px;
+    background: none;
+    border: none;
+    border-bottom: 3px solid transparent;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    transition: all 0.3s ease;
+}
+
+.tab-button:hover {
+    color: var(--primary-color);
+}
+
+.tab-button.active {
+    color: var(--primary-color);
+    border-bottom-color: var(--primary-color);
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* Sections */
+.section {
+    background: var(--card-background);
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    margin-bottom: 20px;
+}
+
+.section h2 {
+    color: var(--text-color);
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+}
+
+.section-title {
+    color: var(--primary-color);
+    margin: 30px 0 15px 0;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--border-color);
+    font-size: 1.2rem;
+}
+
+/* Employee Selector */
+.employee-selector {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.employee-selector select {
+    flex: 1;
+    padding: 12px;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 1rem;
+    background: white;
+    cursor: pointer;
+}
+
+/* Forms */
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: var(--text-color);
+}
+
+.form-group input {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+
+.form-group input.readonly-field {
+    background-color: #f1f5f9;
+    cursor: not-allowed;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.help-text {
+    display: block;
+    margin-top: 5px;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+/* Calendar Container */
+.calendar-container {
+    padding: 15px;
+    background: #f8fafc;
+    border-radius: 8px;
+}
+
+.selected-dates {
+    margin-top: 15px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.date-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 10px;
+    background: var(--primary-color);
+    color: white;
+    border-radius: 6px;
+    font-size: 0.875rem;
+}
+
+.date-tag .remove {
+    cursor: pointer;
+    font-weight: bold;
+    margin-left: 5px;
+}
+
+/* Calculation Summary */
+.calculation-summary {
+    margin-top: 30px;
+    padding: 20px;
+    background: #f8fafc;
+    border-radius: 8px;
+    border-left: 4px solid var(--primary-color);
+}
+
+.calculation-summary h3 {
+    margin-bottom: 15px;
+    color: var(--primary-color);
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.summary-row:last-child {
+    border-bottom: none;
+}
+
+.summary-row.highlight {
+    background: #eff6ff;
+    padding: 15px;
+    margin-top: 10px;
+    border-radius: 6px;
+    font-size: 1.1rem;
+}
+
+.summary-row .value {
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+/* Buttons */
+.btn-primary, .btn-secondary {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background: var(--primary-color);
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #1d4ed8;
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-lg);
+}
+
+.btn-secondary {
+    background: var(--secondary-color);
+    color: white;
+}
+
+.btn-secondary:hover {
+    background: #475569;
+}
+
+.form-actions {
+    display: flex;
+    gap: 15px;
+    margin-top: 30px;
+    justify-content: flex-end;
+}
+
+.report-actions {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+/* Modal */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.modal-content {
+    background-color: white;
+    margin: 5% auto;
+    padding: 30px;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 600px;
+    box-shadow: var(--shadow-lg);
+    animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(-50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.close {
+    color: var(--text-secondary);
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    line-height: 20px;
+}
+
+.close:hover {
+    color: var(--text-color);
+}
+
+.modal-actions {
+    display: flex;
+    gap: 15px;
+    margin-top: 20px;
+    justify-content: flex-end;
+}
+
+/* Calendar */
+#calendar {
+    margin: 20px 0;
+}
+
+.calendar-month {
+    margin-bottom: 30px;
+}
+
+.calendar-header {
+    text-align: center;
+    font-weight: 600;
+    margin-bottom: 10px;
+    font-size: 1.1rem;
+    color: var(--primary-color);
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+}
+
+.calendar-day-header {
+    text-align: center;
+    font-weight: 600;
+    padding: 8px;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+.calendar-day {
+    padding: 10px;
+    text-align: center;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: white;
+}
+
+.calendar-day:hover {
+    background: #eff6ff;
+    border-color: var(--primary-color);
+}
+
+.calendar-day.selected {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+.calendar-day.disabled {
+    color: var(--text-secondary);
+    background: #f1f5f9;
+    cursor: not-allowed;
+}
+
+.calendar-day.other-month {
+    color: var(--text-secondary);
+    opacity: 0.5;
+}
+
+/* Report Table */
+.report-container {
+    overflow-x: auto;
+}
+
+.report-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    font-size: 0.9rem;
+}
+
+.report-table th,
+.report-table td {
+    padding: 10px 8px;
+    text-align: left;
+    border: 1px solid var(--border-color);
+}
+
+.report-table th {
+    background: #f8fafc;
+    font-weight: 600;
+    color: var(--text-color);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.report-table th.group-header {
+    background: #e2e8f0;
+    font-weight: 700;
+    text-align: center;
+    font-size: 0.95rem;
+    border-bottom: 2px solid var(--primary-color);
+}
+
+.report-table th.sub-header {
+    background: #f1f5f9;
+    font-weight: 500;
+    font-size: 0.85rem;
+    white-space: nowrap;
+}
+
+.report-table tr:hover {
+    background: #f8fafc;
+}
+
+.report-table td {
+    font-size: 0.9rem;
+}
+
+.report-table .number {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+
+.report-table .calc-cell {
+    background: #eff6ff;
+    font-weight: 600;
+}
+
+/* Status colors */
+.status-ok {
+    background: #d1fae5;
+    color: #065f46;
+    font-weight: 600;
+}
+
+.status-warning {
+    background: #fef3c7;
+    color: #92400e;
+    font-weight: 600;
+}
+
+.status-error {
+    background: #fee2e2;
+    color: #991b1b;
+    font-weight: 600;
+}
+
+.report-empty {
+    text-align: center;
+    padding: 40px;
+    color: var(--text-secondary);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .container {
+        padding: 10px;
+    }
+
+    header h1 {
+        font-size: 1.8rem;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+
+    .employee-selector {
+        flex-direction: column;
+    }
+
+    .tabs {
+        flex-direction: column;
+    }
+
+    .tab-button {
+        width: 100%;
+    }
+
+    .report-table {
+        font-size: 0.875rem;
+    }
+
+    .report-table th,
+    .report-table td {
+        padding: 8px 4px;
+    }
+}
+
+/* Alerts */
+.alert {
+    padding: 15px 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.alert-success {
+    background: #d1fae5;
+    color: #065f46;
+    border-left: 4px solid var(--success-color);
+}
+
+.alert-error {
+    background: #fee2e2;
+    color: #991b1b;
+    border-left: 4px solid var(--danger-color);
+}
+
+/* Import Container */
+.import-container {
+    display: flex;
+    gap: 15px;
+    margin-top: 15px;
+}
+
+/* Time Off History */
+.time-off-history {
+    margin-top: 10px;
+}
+
+.time-off-group {
+    margin-bottom: 15px;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.time-off-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 15px;
+    background: #f8fafc;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.time-off-header:hover {
+    background: #e2e8f0;
+}
+
+.toggle-icon {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    transition: transform 0.3s ease;
+}
+
+.time-off-details {
+    padding: 15px;
+    background: white;
+}
+
+.time-off-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.time-off-table th,
+.time-off-table td {
+    padding: 8px;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.time-off-table th {
+    font-weight: 600;
+    background: #f8fafc;
+}
+
+.time-off-table td.number {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+
+.time-off-header-modal {
+    padding: 10px 15px;
+    background: #f8fafc;
+    border-radius: 8px 8px 0 0;
+    font-size: 1rem;
+    margin-bottom: -1px;
+}
+
+/* Small view button */
+.btn-view-small {
+    padding: 6px 12px;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-view-small:hover {
+    background: #1d4ed8;
+    transform: translateY(-1px);
+}
+
+/* Missing Submissions Report */
+.missing-report h2 {
+    margin-bottom: 25px;
+    color: var(--text-color);
+}
+
+.stats-summary {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 30px;
+    justify-content: center;
+}
+
+.stat-box {
+    background: var(--background-color);
+    padding: 20px 30px;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: var(--shadow);
+    min-width: 120px;
+}
+
+.stat-box strong {
+    display: block;
+    font-size: 2rem;
+    color: var(--primary-color);
+    margin-bottom: 5px;
+}
+
+.stat-box.stat-success strong {
+    color: var(--success-color);
+}
+
+.stat-box.stat-warning strong {
+    color: #f59e0b;
+}
+
+.success-message {
+    background: #d1fae5;
+    color: #065f46;
+    padding: 20px;
+    border-radius: 12px;
+    text-align: center;
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+    </style>
+</head>
+<body>
+    <!-- Login Screen -->
+    <div id="loginScreen" class="login-screen">
+        <div class="login-container">
+            <h1>🏖️ Ferie Kalkulator</h1>
+            <p class="login-subtitle">Vælg adgangstype</p>
+
+            <div class="login-buttons">
+                <button onclick="showAdminLogin()" class="btn-primary btn-large">🔐 Admin Login</button>
+                <button onclick="showEmployeeLogin()" class="btn-secondary btn-large">👤 Medarbejder Login</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Login Modal -->
+    <div id="adminLoginModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close" onclick="closeAdminLogin()">&times;</span>
+            <h2>Admin Login</h2>
+            <p class="help-text">Indtast brugernavn og adgangskode</p>
+            <input type="text" id="adminUsername" placeholder="Brugernavn" class="login-input" onkeypress="if(event.key==='Enter') document.getElementById('adminPassword').focus()">
+            <input type="password" id="adminPassword" placeholder="Adgangskode" class="login-input" style="margin-top: 10px;" onkeypress="if(event.key==='Enter') adminLogin()">
+            <div class="modal-actions">
+                <button onclick="adminLogin()" class="btn-primary">Login</button>
+                <button onclick="closeAdminLogin()" class="btn-secondary">Annuller</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Employee Login Modal -->
+    <div id="employeeLoginModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close" onclick="closeEmployeeLogin()">&times;</span>
+            <h2>Medarbejder Login</h2>
+            <p class="help-text">Vælg dit navn fra listen</p>
+            <select id="employeeLoginSelect" class="login-input">
+                <option value="">Vælg dit navn...</option>
+            </select>
+            <div class="modal-actions">
+                <button onclick="employeeLogin()" class="btn-primary">Login</button>
+                <button onclick="closeEmployeeLogin()" class="btn-secondary">Annuller</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="container" id="mainApp" style="display: none;">
+        <header>
+            <div class="header-content">
+                <div>
+                    <h1>🏖️ Ferie Kalkulator</h1>
+                    <p class="subtitle">Administrer og se medarbejderes feriedage</p>
+                </div>
+                <div class="user-info">
+                    <button onclick="showAdminLogin()" id="adminLoginBtn" class="btn-admin-login" style="display: none;">🔐 Admin Login</button>
+                    <span id="userDisplay" style="display: none;"></span>
+                    <button onclick="logout()" id="logoutBtn" class="btn-logout" style="display: none;">Log ud</button>
+                </div>
+            </div>
+        </header>
+
+        <div class="tabs" id="tabsContainer">
+            <button class="tab-button active" onclick="showTab('input')">Indtast Data</button>
+            <button class="tab-button" id="reportTab" onclick="showTab('report')">Se Rapport</button>
+        </div>
+
+        <!-- Data Input Tab -->
+        <div id="input-tab" class="tab-content active">
+            <div class="section" id="importSection" style="display: none;">
+                <h2>📥 Importer Time Off Data</h2>
+                <p class="help-text">Importer CSV/Excel data med kolonner: Employee Name, Time Off Reason, Start Date, End Date</p>
+                <div class="import-container">
+                    <input type="file" id="fileInput" accept=".csv,.txt" style="display: none;" onchange="handleFileUpload(event)">
+                    <button onclick="document.getElementById('fileInput').click()" class="btn-primary">📂 Vælg CSV Fil</button>
+                    <button onclick="showPasteDialog()" class="btn-secondary">📋 Indsæt Data</button>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2 id="selectEmployeeHeader">Vælg Medarbejder</h2>
+                <div class="employee-selector">
+                    <select id="employeeSelect" onchange="loadEmployeeData()">
+                        <option value="">Vælg medarbejder...</option>
+                    </select>
+                    <button id="addEmployeeBtn" onclick="addNewEmployee()" class="btn-secondary" style="display: none;">+ Tilføj Ny Medarbejder</button>
+                </div>
+            </div>
+
+            <div id="employeeForm" class="section" style="display: none;">
+                <h2>Medarbejder Information</h2>
+
+                <div class="form-group">
+                    <label>Navn:</label>
+                    <input type="text" id="navn" readonly class="readonly-field">
+                </div>
+
+                <h3 class="section-title">Ferie i SHIFTS (Forudfyldt)</h3>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Ferie i SHIFTS (1/1 - 31/8 - 2025):</label>
+                        <input type="number" id="shifts_ferie_1" step="0.5" readonly class="readonly-field">
+                    </div>
+                    <div class="form-group">
+                        <label>Ferie i SHIFTS (1/9 - 30/11 - 2025):</label>
+                        <input type="number" id="shifts_ferie_2" step="0.5" readonly class="readonly-field">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Ferie i SHIFTS (1/12 - 2025 og frem):</label>
+                    <input type="number" id="shifts_ferie_3" step="0.5" readonly class="readonly-field">
+                </div>
+
+                <h3 class="section-title">Feriefridage i SHIFTS (Forudfyldt)</h3>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Feriefridage i SHIFTS (1/1 - 31/8 - 2025):</label>
+                        <input type="number" id="shifts_fridag_1" step="0.5" readonly class="readonly-field">
+                    </div>
+                    <div class="form-group">
+                        <label>Feriefridage i SHIFTS (1/9 - 30/11 - 2025):</label>
+                        <input type="number" id="shifts_fridag_2" step="0.5" readonly class="readonly-field">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Feriefridage i SHIFTS (1/12 - 2025 og frem):</label>
+                    <input type="number" id="shifts_fridag_3" step="0.5" readonly class="readonly-field">
+                </div>
+
+                <h3 class="section-title">GEOLMS Data (Udfyld selv)</h3>
+
+                <div class="form-group">
+                    <label>Ferie i GEOLMS i alt:</label>
+                    <input type="number" id="geolms_total" step="0.5" oninput="calculateRemaining()">
+                    <span class="help-text">Antal feriedage registreret i GEOLMS systemet</span>
+                </div>
+
+                <div class="form-group">
+                    <label>Ferie i GEOLMS - Datoer holdt (1/1-2025 til nu):</label>
+                    <div id="calendar-container" class="calendar-container">
+                        <button type="button" onclick="openCalendar()" class="btn-secondary">📅 Vælg Datoer</button>
+                        <div id="selected-dates" class="selected-dates"></div>
+                    </div>
+                </div>
+
+                <h3 class="section-title">Lønsedler (Udfyld selv)</h3>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Ferie Lønsedel 1:</label>
+                        <input type="number" id="lonsedel_1" step="0.5" oninput="calculateRemaining()">
+                    </div>
+                    <div class="form-group">
+                        <label>Ferie Lønsedel 2:</label>
+                        <input type="number" id="lonsedel_2" step="0.5" oninput="calculateRemaining()">
+                    </div>
+                </div>
+
+                <h3 class="section-title">Ferieoverførsel (Udfyld selv)</h3>
+
+                <div class="form-group">
+                    <label>Ønsker du at have overført din rest ferie til næste år, eller udbetalt med marts lønnen? (Maks 5 dage)</label>
+                    <div style="margin-top: 10px;">
+                        <label style="display: inline-flex; align-items: center; margin-right: 20px; font-weight: normal;">
+                            <input type="radio" name="ferieOverforselValg" id="ferieOverforsel_overfør" value="Overfør til næste år" style="width: auto; margin-right: 8px;">
+                            Overfør til næste år
+                        </label>
+                        <label style="display: inline-flex; align-items: center; font-weight: normal;">
+                            <input type="radio" name="ferieOverforselValg" id="ferieOverforsel_udbetal" value="Udbetal med marts løn" style="width: auto; margin-right: 8px;">
+                            Udbetal med marts løn
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Antal dage (Maks 5):</label>
+                    <input type="number" id="ferieOverforselDage" min="0" max="5" step="0.5" placeholder="Indtast antal dage (0-5)">
+                    <span class="help-text">Du kan maksimalt vælge 5 dage</span>
+                </div>
+
+                <h3 class="section-title">📅 Time Off Historik (Importeret Data)</h3>
+                <div id="timeOffHistory" class="time-off-history">
+                    <p class="help-text">Ingen Time Off data importeret endnu</p>
+                </div>
+
+                <div class="calculation-summary">
+                    <h3>Beregning</h3>
+                    <div class="summary-row">
+                        <span>Total SHIFTS ferie:</span>
+                        <span id="total_shifts_ferie" class="value">0</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Total SHIFTS feriefridage:</span>
+                        <span id="total_shifts_fridag" class="value">0</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>GEOLMS datoer holdt:</span>
+                        <span id="total_geolms_dates" class="value">0</span>
+                    </div>
+                    <div class="summary-row highlight">
+                        <span><strong>Estimeret ferie tilbage:</strong></span>
+                        <span id="remaining_vacation" class="value"><strong>-</strong></span>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button onclick="saveEmployeeData()" class="btn-primary">💾 Gem Data</button>
+                    <button onclick="clearForm()" class="btn-secondary">🔄 Nulstil</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Report Tab -->
+        <div id="report-tab" class="tab-content">
+            <div class="section">
+                <h2>Ferieoversigt - Alle Medarbejdere</h2>
+                <div class="report-actions">
+                    <button onclick="refreshReport()" class="btn-primary">🔄 Opdater Rapport</button>
+                    <button onclick="showMissingSubmissionsReport()" class="btn-secondary">📊 Indsendelsesrapport</button>
+                    <button onclick="exportToCSV()" class="btn-secondary">📥 Eksporter til CSV</button>
+                </div>
+                <div id="report-container" class="report-container">
+                    <!-- Report will be generated here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Calendar Modal -->
+        <div id="calendarModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeCalendar()">&times;</span>
+                <h2>Vælg Feriedatoer</h2>
+                <div id="calendar"></div>
+                <div class="modal-actions">
+                    <button onclick="saveCalendarDates()" class="btn-primary">Gem Datoer</button>
+                    <button onclick="closeCalendar()" class="btn-secondary">Annuller</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Paste Data Modal -->
+        <div id="pasteModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closePasteDialog()">&times;</span>
+                <h2>Indsæt Time Off Data</h2>
+                <p class="help-text">Kopier data fra Excel og indsæt det herunder (inkl. header række)</p>
+                <textarea id="pasteArea" rows="15" style="width: 100%; padding: 10px; font-family: monospace; border: 2px solid var(--border-color); border-radius: 8px;"></textarea>
+                <div class="modal-actions">
+                    <button onclick="processPastedData()" class="btn-primary">📥 Importer</button>
+                    <button onclick="closePasteDialog()" class="btn-secondary">Annuller</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+// Global state
+let employees = [];
+let currentEmployee = null;
+let selectedDates = [];
+let timeOffData = []; // Store imported time off data
+let isAdmin = false;
+let currentUserName = null;
+
+// Admin credentials
+const ADMIN_USERNAME = 'Isabella';
+const ADMIN_PASSWORD = 'Kristina1';
+
+// Initialize app
+document.addEventListener('DOMContentLoaded', function() {
+    loadEmployeesFromStorage();
+    initializeEmployeeView();
+});
+
+// Initialize employee view (default view)
+function initializeEmployeeView() {
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('mainApp').style.display = 'block';
+
+    // Hide admin-only elements
+    document.getElementById('importSection').style.display = 'none';
+    document.getElementById('reportTab').style.display = 'none';
+    document.getElementById('addEmployeeBtn').style.display = 'none';
+
+    // Show admin login button in header
+    document.getElementById('adminLoginBtn').style.display = 'inline-block';
+    document.getElementById('userDisplay').style.display = 'none';
+    document.getElementById('logoutBtn').style.display = 'none';
+
+    // Populate employee dropdown
+    populateEmployeeSelect();
+
+    // Set header text
+    document.getElementById('selectEmployeeHeader').textContent = 'Din Profil';
+}
+
+// Login Functions
+function showLoginScreen() {
+    document.getElementById('loginScreen').style.display = 'flex';
+    document.getElementById('mainApp').style.display = 'none';
+}
+
+function showAdminLogin() {
+    document.getElementById('adminLoginModal').style.display = 'block';
+    document.getElementById('adminUsername').value = '';
+    document.getElementById('adminPassword').value = '';
+    document.getElementById('adminUsername').focus();
+}
+
+function closeAdminLogin() {
+    document.getElementById('adminLoginModal').style.display = 'none';
+}
+
+function adminLogin() {
+    const username = document.getElementById('adminUsername').value;
+    const password = document.getElementById('adminPassword').value;
+
+    if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
+        isAdmin = true;
+        currentUserName = 'Administrator';
+        initializeAdminView();
+        closeAdminLogin();
+    } else {
+        showAlert('Forkert brugernavn eller adgangskode!', 'error');
+        document.getElementById('adminUsername').value = '';
+        document.getElementById('adminPassword').value = '';
+    }
+}
+
+function initializeAdminView() {
+    // Show admin-only elements
+    document.getElementById('importSection').style.display = 'block';
+    document.getElementById('reportTab').style.display = 'block';
+    document.getElementById('addEmployeeBtn').style.display = 'inline-block';
+
+    // Hide admin login button, show user display and logout
+    document.getElementById('adminLoginBtn').style.display = 'none';
+    document.getElementById('userDisplay').style.display = 'inline-block';
+    document.getElementById('logoutBtn').style.display = 'inline-block';
+    document.getElementById('userDisplay').textContent = '🔐 Administrator';
+
+    // Enable employee select for admin
+    document.getElementById('employeeSelect').disabled = false;
+    document.getElementById('selectEmployeeHeader').textContent = 'Vælg Medarbejder';
+
+    // Refresh report
+    refreshReport();
+}
+
+// Old employee login functions removed - now showing employee view directly on load
+
+function logout() {
+    if (confirm('Er du sikker på at du vil logge ud?')) {
+        isAdmin = false;
+        currentEmployee = null;
+        currentUserName = null;
+        selectedDates = [];
+
+        // Reset form
+        document.getElementById('employeeForm').style.display = 'none';
+        document.getElementById('employeeSelect').value = '';
+
+        // Return to employee view
+        initializeEmployeeView();
+    }
+}
+
+// Tab management
+function showTab(tabName) {
+    // Hide all tabs
+    document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.classList.remove('active');
+    });
+
+    // Remove active class from all buttons
+    document.querySelectorAll('.tab-button').forEach(btn => {
+        btn.classList.remove('active');
+    });
+
+    // Show selected tab
+    document.getElementById(tabName + '-tab').classList.add('active');
+
+    // Add active class to clicked button
+    event.target.classList.add('active');
+
+    // Refresh report when switching to report tab
+    if (tabName === 'report') {
+        refreshReport();
+    }
+}
+
+// Load employees from localStorage
+function loadEmployeesFromStorage() {
+    const stored = localStorage.getItem('vacationEmployees');
+    if (stored) {
+        employees = JSON.parse(stored);
+    } else {
+        // Load from initial data if available
+        loadInitialData();
+    }
+}
+
+// Save employees to localStorage
+function saveEmployeesToStorage() {
+    localStorage.setItem('vacationEmployees', JSON.stringify(employees));
+}
+
+// Load initial data (this should be populated with your SHIFTS data)
+function loadInitialData() {
+    // SHIFTS data calculated from data.xlsx - Employee vacation days by period
+    const shiftsData = {
+        "AKLA (Allan Kjær Larsen)": {"shifts_ferie_1": 19.0, "shifts_ferie_2": 0, "shifts_ferie_3": 2.0, "shifts_fridag_1": 2.0, "shifts_fridag_2": 0, "shifts_fridag_3": 0},
+        "ANND (Andreas Nielsen Dideriksen)": {"shifts_ferie_1": 11.0, "shifts_ferie_2": 6.0, "shifts_ferie_3": 0, "shifts_fridag_1": 4.0, "shifts_fridag_2": 0, "shifts_fridag_3": 0},
+        "ATOZ (Atif Haroon)": {"shifts_ferie_1": 6.0, "shifts_ferie_2": 16.0, "shifts_ferie_3": 3.0, "shifts_fridag_1": 5.0, "shifts_fridag_2": 0, "shifts_fridag_3": 0},
+        "AUUA (Abdulruhman Alshaabni)": {"shifts_ferie_1": 11.0, "shifts_ferie_2": 1.0, "shifts_ferie_3": 13.0, "shifts_fridag_1": 4.0, "shifts_fridag_2": 5.0, "shifts_fridag_3": 0},
+        "CVTN (Christian Valentin)": {"shifts_ferie_1": 21.0, "shifts_ferie_2": 0, "shifts_ferie_3": 2.0, "shifts_fridag_1": 0, "shifts_fridag_2": 2.0, "shifts_fridag_3": 0},
+        "DNKQ (Daniel Nørlev Kristensen)": {"shifts_ferie_1": 17.0, "shifts_ferie_2": 7.0, "shifts_ferie_3": 0, "shifts_fridag_1": 5.0, "shifts_fridag_2": 2.0, "shifts_fridag_3": 0},
+        "EKXL (Kasper Lykke)": {"shifts_ferie_1": 15.0, "shifts_ferie_2": 6.0, "shifts_ferie_3": 10.0, "shifts_fridag_1": 1.0, "shifts_fridag_2": 0, "shifts_fridag_3": 0},
+        "FCHZ (Christopher Larsen)": {"shifts_ferie_1": 0, "shifts_ferie_2": 0, "shifts_ferie_3": 0, "shifts_fridag_1": 0, "shifts_fridag_2": 1.0, "shifts_fridag_3": 0},
+        "FHYX (Fahad Hussain)": {"shifts_ferie_1": 23.0, "shifts_ferie_2": 4.0, "shifts_ferie_3": 4.0, "shifts_fridag_1": 5.0, "shifts_fridag_2": 0, "shifts_fridag_3": 0},
+        "GFZD (Gregers Fritzen Due)": {"shifts_ferie_1": 12.0, "shifts_ferie_2": 0, "shifts_ferie_3": 12.0, "shifts_fridag_1": 4.0, "shifts_fridag_2": 1.0, "shifts_fridag_3": 0},
+        "GMDQ (Mohammad Al-Shaabny)": {"shifts_ferie_1": 15.0, "shifts_ferie_2": 8.0, "shifts_ferie_3": 5.0, "shifts_fridag_1": 1.0, "shifts_fridag_2": 0, "shifts_fridag_3": 0},
+        "HHLB (Hannah Helena Bidstrup)": {"shifts_ferie_1": 9.0, "shifts_ferie_2": 0, "shifts_ferie_3": 3.0, "shifts_fridag_1": 10.0, "shifts_fridag_2": 0, "shifts_fridag_3": 0},
+        "HMSG (Martin Stage)": {"shifts_ferie_1": 20.0, "shifts_ferie_2": 1.0, "shifts_ferie_3": 3.0, "shifts_fridag_1": 5.0, "shifts_fridag_2": 0, "shifts_fridag_3": 5.0},
+        "JHNV (Jan Henrik Vørts)": {"shifts_ferie_1": 14.0, "shifts_ferie_2": 1.0, "shifts_ferie_3": 4.0, "shifts_fridag_1": 7.0, "shifts_fridag_2": 1.0, "shifts_fridag_3": 0},
+        "JWGH (Jim Wagner Hansen)": {"shifts_ferie_1": 18.0, "shifts_ferie_2": 0, "shifts_ferie_3": 4.0, "shifts_fridag_1": 6.0, "shifts_fridag_2": 0, "shifts_fridag_3": 0},
+        "MJTV (Martin Thaulov)": {"shifts_ferie_1": 21.0, "shifts_ferie_2": 0, "shifts_ferie_3": 0, "shifts_fridag_1": 6.0, "shifts_fridag_2": 0, "shifts_fridag_3": 0},
+        "NSST (Nicholas Sutherland Strang)": {"shifts_ferie_1": 23.0, "shifts_ferie_2": 0, "shifts_ferie_3": 4.0, "shifts_fridag_1": 0, "shifts_fridag_2": 2.0, "shifts_fridag_3": 0},
+        "OFMH (Mostafa Muayad Hadi)": {"shifts_ferie_1": 9.0, "shifts_ferie_2": 15.0, "shifts_ferie_3": 0, "shifts_fridag_1": 2.0, "shifts_fridag_2": 0, "shifts_fridag_3": 0},
+        "OKYR (Okan Yildirim)": {"shifts_ferie_1": 6.0, "shifts_ferie_2": 0, "shifts_ferie_3": 6.0, "shifts_fridag_1": 4.0, "shifts_fridag_2": 1.0, "shifts_fridag_3": 5.0},
+        "OMNP (Arisara Moonprom)": {"shifts_ferie_1": 19.0, "shifts_ferie_2": 2.0, "shifts_ferie_3": 0, "shifts_fridag_1": 0, "shifts_fridag_2": 0, "shifts_fridag_3": 0},
+        "OWAL (Asger Louv)": {"shifts_ferie_1": 0, "shifts_ferie_2": 10.0, "shifts_ferie_3": 0, "shifts_fridag_1": 0, "shifts_fridag_2": 0, "shifts_fridag_3": 0},
+        "PLRK (Philip Lærke)": {"shifts_ferie_1": 28.0, "shifts_ferie_2": 0, "shifts_ferie_3": 2.0, "shifts_fridag_1": 3.0, "shifts_fridag_2": 4.0, "shifts_fridag_3": 0},
+        "PLZN (Paulius Zilinskas)": {"shifts_ferie_1": 6.0, "shifts_ferie_2": 9.0, "shifts_ferie_3": 2.0, "shifts_fridag_1": 0, "shifts_fridag_2": 1.0, "shifts_fridag_3": 0},
+        "PWNR (Patrick Noer)": {"shifts_ferie_1": 2.0, "shifts_ferie_2": 1.0, "shifts_ferie_3": 9.0, "shifts_fridag_1": 2.0, "shifts_fridag_2": 1.0, "shifts_fridag_3": 0},
+        "QAXL (Anders Ulrich Larsen)": {"shifts_ferie_1": 5.0, "shifts_ferie_2": 0, "shifts_ferie_3": 1.0, "shifts_fridag_1": 10.0, "shifts_fridag_2": 0, "shifts_fridag_3": 0},
+        "QEAW (Alexander Weikop)": {"shifts_ferie_1": 1.0, "shifts_ferie_2": 1.0, "shifts_ferie_3": 0, "shifts_fridag_1": 0, "shifts_fridag_2": 5.0, "shifts_fridag_3": 0},
+        "QXMP (Mandeep Singh Phull)": {"shifts_ferie_1": 6.0, "shifts_ferie_2": 5.0, "shifts_ferie_3": 14.0, "shifts_fridag_1": 0, "shifts_fridag_2": 0, "shifts_fridag_3": 5.0},
+        "QYAA (Alia Birch Andersen)": {"shifts_ferie_1": 8.0, "shifts_ferie_2": 1.0, "shifts_ferie_3": 0, "shifts_fridag_1": 6.0, "shifts_fridag_2": 0, "shifts_fridag_3": 0},
+        "QZEH (Jan Vagner Hansen)": {"shifts_ferie_1": 0, "shifts_ferie_2": 2.0, "shifts_ferie_3": 0, "shifts_fridag_1": 0, "shifts_fridag_2": 1.0, "shifts_fridag_3": 5.0},
+        "RYLS (Rasmus Lave Schulz)": {"shifts_ferie_1": 16.0, "shifts_ferie_2": 5.0, "shifts_ferie_3": 4.0, "shifts_fridag_1": 2.0, "shifts_fridag_2": 5.0, "shifts_fridag_3": 0},
+        "SQEB (Søren Bregengaard)": {"shifts_ferie_1": 14.0, "shifts_ferie_2": 3.0, "shifts_ferie_3": 4.0, "shifts_fridag_1": 2.0, "shifts_fridag_2": 0, "shifts_fridag_3": 0},
+        "STZE (Stig Erbs)": {"shifts_ferie_1": 28.0, "shifts_ferie_2": 1.0, "shifts_ferie_3": 4.0, "shifts_fridag_1": 0, "shifts_fridag_2": 5.0, "shifts_fridag_3": 0},
+        "TZHP (Thim Hintze Pedersen)": {"shifts_ferie_1": 2.0, "shifts_ferie_2": 8.0, "shifts_ferie_3": 10.0, "shifts_fridag_1": 5.0, "shifts_fridag_2": 5.0, "shifts_fridag_3": 0},
+        "URJN (Rasmus Jensen)": {"shifts_ferie_1": 3.0, "shifts_ferie_2": 16.0, "shifts_ferie_3": 0, "shifts_fridag_1": 3.0, "shifts_fridag_2": 0, "shifts_fridag_3": 0},
+        "VEOI (Amir Ali Soghir)": {"shifts_ferie_1": 7.0, "shifts_ferie_2": 5.0, "shifts_ferie_3": 0, "shifts_fridag_1": 8.0, "shifts_fridag_2": 1.0, "shifts_fridag_3": 2.0},
+        "WHTL (Christian Nylander Larsen)": {"shifts_ferie_1": 22.0, "shifts_ferie_2": 5.0, "shifts_ferie_3": 0, "shifts_fridag_1": 3.0, "shifts_fridag_2": 3.0, "shifts_fridag_3": 4.0},
+        "WKPV (Kasper Smidt)": {"shifts_ferie_1": 6.0, "shifts_ferie_2": 10.0, "shifts_ferie_3": 2.0, "shifts_fridag_1": 5.0, "shifts_fridag_2": 0, "shifts_fridag_3": 0},
+        "WTVZ (Theis Eskildsen)": {"shifts_ferie_1": 15.0, "shifts_ferie_2": 0, "shifts_ferie_3": 5.0, "shifts_fridag_1": 5.0, "shifts_fridag_2": 0, "shifts_fridag_3": 0},
+        "YBAQ (Ahmad Alshaabni)": {"shifts_ferie_1": 0, "shifts_ferie_2": 10.0, "shifts_ferie_3": 9.0, "shifts_fridag_1": 3.0, "shifts_fridag_2": 0, "shifts_fridag_3": 0},
+        "YDCE (Anders Christensen)": {"shifts_ferie_1": 1.0, "shifts_ferie_2": 14.0, "shifts_ferie_3": 4.0, "shifts_fridag_1": 5.0, "shifts_fridag_2": 0, "shifts_fridag_3": 0},
+        "YZDR (Yusuf Abdikarim)": {"shifts_ferie_1": 16.0, "shifts_ferie_2": 0, "shifts_ferie_3": 4.0, "shifts_fridag_1": 3.0, "shifts_fridag_2": 1.0, "shifts_fridag_3": 0},
+        "ZFBJ (Frederik Bjarnøe)": {"shifts_ferie_1": 24.0, "shifts_ferie_2": 0, "shifts_ferie_3": 0, "shifts_fridag_1": 1.0, "shifts_fridag_2": 3.0, "shifts_fridag_3": 0},
+        "ZINE (Mathias Christopher Nielsen)": {"shifts_ferie_1": 0, "shifts_ferie_2": 0, "shifts_ferie_3": 0, "shifts_fridag_1": 0, "shifts_fridag_2": 2.0, "shifts_fridag_3": 0},
+        "ZKAB (Ken Albiniussen)": {"shifts_ferie_1": 21.0, "shifts_ferie_2": 10.0, "shifts_ferie_3": 6.0, "shifts_fridag_1": 0, "shifts_fridag_2": 0, "shifts_fridag_3": 0},
+        "ZNKW (Nikolas Olsen)": {"shifts_ferie_1": 20.0, "shifts_ferie_2": 0, "shifts_ferie_3": 4.0, "shifts_fridag_1": 3.0, "shifts_fridag_2": 3.0, "shifts_fridag_3": 0}
+    };
+
+    // Create employees with SHIFTS data
+    employees = Object.keys(shiftsData).map(name => {
+        const data = shiftsData[name];
+        return {
+            navn: name,
+            shifts_ferie_1: data.shifts_ferie_1,
+            shifts_ferie_2: data.shifts_ferie_2,
+            shifts_ferie_3: data.shifts_ferie_3,
+            shifts_fridag_1: data.shifts_fridag_1,
+            shifts_fridag_2: data.shifts_fridag_2,
+            shifts_fridag_3: data.shifts_fridag_3,
+            geolms_total: 0,
+            geolms_dates: [],
+            lonsedel_1: 0,
+            lonsedel_2: 0,
+            ferieOverforselValg: '',
+            ferieOverforselDage: 0,
+            timeOffRecords: [],
+            hasSubmitted: false,
+            lastSubmitted: null
+        };
+    });
+
+    saveEmployeesToStorage();
+}
+
+// Import Time Off Data from CSV/Excel
+function importTimeOffData(csvText) {
+    const lines = csvText.trim().split('\n');
+    const headers = lines[0].split(/[,;\t]/).map(h => h.trim());
+
+    // Find column indexes
+    const nameIdx = headers.findIndex(h => h.toLowerCase().includes('name') || h.toLowerCase().includes('navn'));
+    const reasonIdx = headers.findIndex(h => h.toLowerCase().includes('reason') || h.toLowerCase().includes('årsag'));
+    const startIdx = headers.findIndex(h => h.toLowerCase().includes('start date'));
+    const endIdx = headers.findIndex(h => h.toLowerCase().includes('end date'));
+
+    // Group by employee
+    const employeeTimeOff = {};
+
+    for (let i = 1; i < lines.length; i++) {
+        const cols = lines[i].split(/[,;\t]/).map(c => c.trim());
+        if (cols.length < 4) continue;
+
+        const name = cols[nameIdx];
+        const reason = cols[reasonIdx];
+        const startDate = cols[startIdx];
+        const endDate = cols[endIdx];
+
+        if (!name) continue;
+
+        if (!employeeTimeOff[name]) {
+            employeeTimeOff[name] = [];
+        }
+
+        employeeTimeOff[name].push({
+            reason: reason,
+            startDate: startDate,
+            endDate: endDate,
+            days: calculateDaysBetween(startDate, endDate)
+        });
+    }
+
+    // Update employees with time off data
+    Object.keys(employeeTimeOff).forEach(name => {
+        let emp = employees.find(e => e.navn === name);
+        if (!emp) {
+            // Create new employee if not exists
+            emp = {
+                navn: name,
+                shifts_ferie_1: 0,
+                shifts_ferie_2: 0,
+                shifts_ferie_3: 0,
+                shifts_fridag_1: 0,
+                shifts_fridag_2: 0,
+                shifts_fridag_3: 0,
+                geolms_total: 0,
+                geolms_dates: [],
+                lonsedel_1: 0,
+                lonsedel_2: 0,
+                ferieOverforselValg: '',
+                ferieOverforselDage: 0,
+                timeOffRecords: [],
+                hasSubmitted: false,
+                lastSubmitted: null
+            };
+            employees.push(emp);
+        }
+        emp.timeOffRecords = employeeTimeOff[name];
+    });
+
+    saveEmployeesToStorage();
+    populateEmployeeSelect();
+    refreshReport();
+    showAlert('Time Off data importeret!', 'success');
+}
+
+// Calculate days between two dates
+function calculateDaysBetween(start, end) {
+    const startDate = new Date(start);
+    const endDate = new Date(end);
+    const diffTime = Math.abs(endDate - startDate);
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1; // +1 to include both start and end day
+    return diffDays;
+}
+
+// Populate employee select dropdown
+function populateEmployeeSelect() {
+    const select = document.getElementById('employeeSelect');
+    select.innerHTML = '<option value="">Vælg medarbejder...</option>';
+
+    employees.forEach((emp, index) => {
+        const option = document.createElement('option');
+        option.value = index;
+        option.textContent = emp.navn;
+        select.appendChild(option);
+    });
+}
+
+// Load employee data into form
+function loadEmployeeData() {
+    const select = document.getElementById('employeeSelect');
+    const index = select.value;
+
+    if (index === '') {
+        document.getElementById('employeeForm').style.display = 'none';
+        return;
+    }
+
+    currentEmployee = employees[index];
+    document.getElementById('employeeForm').style.display = 'block';
+
+    // Populate form fields
+    document.getElementById('navn').value = currentEmployee.navn || '';
+    document.getElementById('shifts_ferie_1').value = currentEmployee.shifts_ferie_1 || 0;
+    document.getElementById('shifts_ferie_2').value = currentEmployee.shifts_ferie_2 || 0;
+    document.getElementById('shifts_ferie_3').value = currentEmployee.shifts_ferie_3 || 0;
+    document.getElementById('shifts_fridag_1').value = currentEmployee.shifts_fridag_1 || 0;
+    document.getElementById('shifts_fridag_2').value = currentEmployee.shifts_fridag_2 || 0;
+    document.getElementById('shifts_fridag_3').value = currentEmployee.shifts_fridag_3 || 0;
+    document.getElementById('geolms_total').value = currentEmployee.geolms_total || 0;
+    document.getElementById('lonsedel_1').value = currentEmployee.lonsedel_1 || 0;
+    document.getElementById('lonsedel_2').value = currentEmployee.lonsedel_2 || 0;
+
+    // Load ferieoverførsel fields
+    const valg = currentEmployee.ferieOverforselValg || '';
+    if (valg === 'Overfør til næste år') {
+        document.getElementById('ferieOverforsel_overfør').checked = true;
+    } else if (valg === 'Udbetal med marts løn') {
+        document.getElementById('ferieOverforsel_udbetal').checked = true;
+    } else {
+        // Clear both radio buttons
+        document.getElementById('ferieOverforsel_overfør').checked = false;
+        document.getElementById('ferieOverforsel_udbetal').checked = false;
+    }
+    document.getElementById('ferieOverforselDage').value = currentEmployee.ferieOverforselDage || 0;
+
+    // Load selected dates
+    selectedDates = currentEmployee.geolms_dates || [];
+    displaySelectedDates();
+
+    // Display Time Off history
+    displayTimeOffHistory();
+
+    // Calculate totals
+    calculateRemaining();
+}
+
+// Add new employee
+function addNewEmployee() {
+    const name = prompt('Indtast navn på ny medarbejder:');
+    if (name && name.trim()) {
+        const newEmployee = {
+            navn: name.trim(),
+            shifts_ferie_1: 0,
+            shifts_ferie_2: 0,
+            shifts_ferie_3: 0,
+            shifts_fridag_1: 0,
+            shifts_fridag_2: 0,
+            shifts_fridag_3: 0,
+            geolms_total: 0,
+            geolms_dates: [],
+            lonsedel_1: 0,
+            lonsedel_2: 0,
+            ferieOverforselValg: '',
+            ferieOverforselDage: 0,
+            timeOffRecords: [],
+            hasSubmitted: false,
+            lastSubmitted: null
+        };
+
+        employees.push(newEmployee);
+        saveEmployeesToStorage();
+        populateEmployeeSelect();
+
+        // Select the new employee
+        document.getElementById('employeeSelect').value = employees.length - 1;
+        loadEmployeeData();
+
+        showAlert('Ny medarbejder tilføjet!', 'success');
+    }
+}
+
+// Save employee data
+function saveEmployeeData() {
+    if (!currentEmployee) return;
+
+    const select = document.getElementById('employeeSelect');
+    const index = select.value;
+
+    // Get values from editable fields only
+    employees[index].geolms_total = parseFloat(document.getElementById('geolms_total').value) || 0;
+    employees[index].lonsedel_1 = parseFloat(document.getElementById('lonsedel_1').value) || 0;
+    employees[index].lonsedel_2 = parseFloat(document.getElementById('lonsedel_2').value) || 0;
+    employees[index].geolms_dates = selectedDates;
+
+    // Save ferieoverførsel data
+    const valgRadio = document.querySelector('input[name="ferieOverforselValg"]:checked');
+    employees[index].ferieOverforselValg = valgRadio ? valgRadio.value : '';
+
+    const dage = parseFloat(document.getElementById('ferieOverforselDage').value) || 0;
+    // Validate max 5 days
+    if (dage > 5) {
+        showAlert('Du kan maksimalt vælge 5 dage!', 'error');
+        document.getElementById('ferieOverforselDage').value = 5;
+        employees[index].ferieOverforselDage = 5;
+    } else {
+        employees[index].ferieOverforselDage = dage;
+    }
+
+    // Mark as submitted with timestamp
+    employees[index].hasSubmitted = true;
+    employees[index].lastSubmitted = new Date().toISOString();
+
+    saveEmployeesToStorage();
+    showAlert('Data gemt!', 'success');
+    calculateRemaining();
+}
+
+// Clear form
+function clearForm() {
+    if (confirm('Er du sikker på at du vil nulstille formularen?')) {
+        document.getElementById('employeeSelect').value = '';
+        document.getElementById('employeeForm').style.display = 'none';
+        currentEmployee = null;
+        selectedDates = [];
+    }
+}
+
+// Calculate remaining vacation days
+function calculateRemaining() {
+    // Calculate totals
+    const shifts_ferie_total =
+        (parseFloat(document.getElementById('shifts_ferie_1').value) || 0) +
+        (parseFloat(document.getElementById('shifts_ferie_2').value) || 0) +
+        (parseFloat(document.getElementById('shifts_ferie_3').value) || 0);
+
+    const shifts_fridag_total =
+        (parseFloat(document.getElementById('shifts_fridag_1').value) || 0) +
+        (parseFloat(document.getElementById('shifts_fridag_2').value) || 0) +
+        (parseFloat(document.getElementById('shifts_fridag_3').value) || 0);
+
+    const geolms_dates_count = selectedDates.length;
+
+    // Display totals
+    document.getElementById('total_shifts_ferie').textContent = shifts_ferie_total.toFixed(1);
+    document.getElementById('total_shifts_fridag').textContent = shifts_fridag_total.toFixed(1);
+    document.getElementById('total_geolms_dates').textContent = geolms_dates_count;
+
+    // Calculate remaining
+    // This is a simple calculation - you can adjust the logic based on your needs
+    const remaining = shifts_ferie_total - geolms_dates_count;
+    document.getElementById('remaining_vacation').textContent = remaining.toFixed(1) + ' dage';
+}
+
+// Calendar functions
+function openCalendar() {
+    const modal = document.getElementById('calendarModal');
+    modal.style.display = 'block';
+    generateCalendar();
+}
+
+function closeCalendar() {
+    document.getElementById('calendarModal').style.display = 'none';
+}
+
+function generateCalendar() {
+    const calendar = document.getElementById('calendar');
+    calendar.innerHTML = '';
+
+    const currentDate = new Date();
+    const currentYear = 2025;
+    const currentMonth = currentDate.getMonth();
+
+    // Generate calendar for January to current month of 2025
+    for (let month = 0; month <= currentMonth; month++) {
+        const monthDiv = document.createElement('div');
+        monthDiv.className = 'calendar-month';
+
+        const monthName = new Date(currentYear, month, 1).toLocaleDateString('da-DK', {
+            month: 'long',
+            year: 'numeric'
+        });
+
+        const header = document.createElement('div');
+        header.className = 'calendar-header';
+        header.textContent = monthName.charAt(0).toUpperCase() + monthName.slice(1);
+        monthDiv.appendChild(header);
+
+        const grid = document.createElement('div');
+        grid.className = 'calendar-grid';
+
+        // Add day headers
+        const dayNames = ['Man', 'Tir', 'Ons', 'Tor', 'Fre', 'Lør', 'Søn'];
+        dayNames.forEach(day => {
+            const dayHeader = document.createElement('div');
+            dayHeader.className = 'calendar-day-header';
+            dayHeader.textContent = day;
+            grid.appendChild(dayHeader);
+        });
+
+        // Get first day of month and total days
+        const firstDay = new Date(currentYear, month, 1);
+        const lastDay = new Date(currentYear, month + 1, 0);
+        const daysInMonth = lastDay.getDate();
+
+        // Adjust for Monday start (getDay() returns 0 for Sunday)
+        let startDay = firstDay.getDay() - 1;
+        if (startDay === -1) startDay = 6;
+
+        // Add empty cells for days before month starts
+        for (let i = 0; i < startDay; i++) {
+            const emptyDay = document.createElement('div');
+            emptyDay.className = 'calendar-day other-month';
+            grid.appendChild(emptyDay);
+        }
+
+        // Add days of month
+        for (let day = 1; day <= daysInMonth; day++) {
+            const dateStr = `${currentYear}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+            const dayDiv = document.createElement('div');
+            dayDiv.className = 'calendar-day';
+            dayDiv.textContent = day;
+            dayDiv.dataset.date = dateStr;
+
+            // Check if date is selected
+            if (selectedDates.includes(dateStr)) {
+                dayDiv.classList.add('selected');
+            }
+
+            dayDiv.onclick = function() {
+                toggleDate(this);
+            };
+
+            grid.appendChild(dayDiv);
+        }
+
+        monthDiv.appendChild(grid);
+        calendar.appendChild(monthDiv);
+    }
+}
+
+function toggleDate(element) {
+    const date = element.dataset.date;
+    const index = selectedDates.indexOf(date);
+
+    if (index > -1) {
+        selectedDates.splice(index, 1);
+        element.classList.remove('selected');
+    } else {
+        selectedDates.push(date);
+        element.classList.add('selected');
+    }
+}
+
+function saveCalendarDates() {
+    displaySelectedDates();
+    calculateRemaining();
+    closeCalendar();
+}
+
+function displaySelectedDates() {
+    const container = document.getElementById('selected-dates');
+    container.innerHTML = '';
+
+    if (selectedDates.length === 0) {
+        container.innerHTML = '<div class="help-text">Ingen datoer valgt</div>';
+        return;
+    }
+
+    // Sort dates
+    selectedDates.sort();
+
+    selectedDates.forEach(date => {
+        const tag = document.createElement('div');
+        tag.className = 'date-tag';
+
+        const formattedDate = new Date(date + 'T00:00:00').toLocaleDateString('da-DK', {
+            day: 'numeric',
+            month: 'short',
+            year: 'numeric'
+        });
+
+        tag.innerHTML = `
+            ${formattedDate}
+            <span class="remove" onclick="removeDate('${date}')">×</span>
+        `;
+
+        container.appendChild(tag);
+    });
+}
+
+function removeDate(date) {
+    const index = selectedDates.indexOf(date);
+    if (index > -1) {
+        selectedDates.splice(index, 1);
+        displaySelectedDates();
+        calculateRemaining();
+    }
+}
+
+// Report functions
+function refreshReport() {
+    const container = document.getElementById('report-container');
+
+    if (employees.length === 0) {
+        container.innerHTML = '<div class="report-empty">Ingen data tilgængelig. Tilføj medarbejdere for at se rapporten.</div>';
+        return;
+    }
+
+    let html = '<div style="overflow-x: auto;">';
+    html += '<table class="report-table">';
+    html += '<thead><tr>';
+    html += '<th rowspan="2">Navn</th>';
+    html += '<th colspan="3" class="group-header">SHIFTS Ferie</th>';
+    html += '<th colspan="3" class="group-header">SHIFTS Feriefridage</th>';
+    html += '<th colspan="2" class="group-header">GEOLMS</th>';
+    html += '<th colspan="2" class="group-header">Lønsedler</th>';
+    html += '<th colspan="2" class="group-header">Ferieoverførsel</th>';
+    html += '<th colspan="4" class="group-header">Beregninger</th>';
+    html += '<th rowspan="2">Time Off</th>';
+    html += '</tr>';
+    html += '<tr>';
+    // SHIFTS Ferie sub-headers
+    html += '<th class="number sub-header">1/1-31/8</th>';
+    html += '<th class="number sub-header">1/9-30/11</th>';
+    html += '<th class="number sub-header">1/12+</th>';
+    // SHIFTS Fridag sub-headers
+    html += '<th class="number sub-header">1/1-31/8</th>';
+    html += '<th class="number sub-header">1/9-30/11</th>';
+    html += '<th class="number sub-header">1/12+</th>';
+    // GEOLMS sub-headers
+    html += '<th class="number sub-header">I alt</th>';
+    html += '<th class="number sub-header">Holdt</th>';
+    // Lønsedel sub-headers
+    html += '<th class="number sub-header">Løns. 1</th>';
+    html += '<th class="number sub-header">Løns. 2</th>';
+    // Ferieoverførsel sub-headers
+    html += '<th class="sub-header">Valg</th>';
+    html += '<th class="number sub-header">Dage</th>';
+    // Beregninger sub-headers
+    html += '<th class="number sub-header">Total SHIFTS</th>';
+    html += '<th class="number sub-header">Eget Input Total</th>';
+    html += '<th class="number sub-header">Forskel</th>';
+    html += '<th class="number sub-header">Status</th>';
+    html += '</tr></thead><tbody>';
+
+    employees.forEach((emp, idx) => {
+        const total_shifts_ferie = (emp.shifts_ferie_1 || 0) + (emp.shifts_ferie_2 || 0) + (emp.shifts_ferie_3 || 0);
+        const total_shifts_fridag = (emp.shifts_fridag_1 || 0) + (emp.shifts_fridag_2 || 0) + (emp.shifts_fridag_3 || 0);
+        const geolms_holdt = (emp.geolms_dates || []).length;
+        const geolms_total = (emp.geolms_total || 0);
+        const lonsedel_total = (emp.lonsedel_1 || 0) + (emp.lonsedel_2 || 0);
+
+        // Eget input = GEOLMS total + Lønsedler
+        const eget_input_total = geolms_total + lonsedel_total;
+
+        // Forskel = SHIFTS - Eget Input
+        const forskel = total_shifts_ferie - eget_input_total;
+
+        // Status baseret på forskel
+        let statusClass = '';
+        let statusText = '✓ Match';
+        if (Math.abs(forskel) > 0.1) {
+            if (forskel > 0) {
+                statusClass = 'status-warning';
+                statusText = `⚠️ SHIFTS har ${forskel.toFixed(1)} mere`;
+            } else {
+                statusClass = 'status-error';
+                statusText = `❌ Input har ${Math.abs(forskel).toFixed(1)} mere`;
+            }
+        } else {
+            statusClass = 'status-ok';
+        }
+
+        const hasTimeOff = emp.timeOffRecords && emp.timeOffRecords.length > 0;
+        const timeOffCount = hasTimeOff ? emp.timeOffRecords.length : 0;
+
+        html += '<tr>';
+        html += `<td><strong>${emp.navn}</strong></td>`;
+        // SHIFTS Ferie
+        html += `<td class="number">${(emp.shifts_ferie_1 || 0).toFixed(1)}</td>`;
+        html += `<td class="number">${(emp.shifts_ferie_2 || 0).toFixed(1)}</td>`;
+        html += `<td class="number">${(emp.shifts_ferie_3 || 0).toFixed(1)}</td>`;
+        // SHIFTS Fridag
+        html += `<td class="number">${(emp.shifts_fridag_1 || 0).toFixed(1)}</td>`;
+        html += `<td class="number">${(emp.shifts_fridag_2 || 0).toFixed(1)}</td>`;
+        html += `<td class="number">${(emp.shifts_fridag_3 || 0).toFixed(1)}</td>`;
+        // GEOLMS
+        html += `<td class="number">${geolms_total.toFixed(1)}</td>`;
+        html += `<td class="number">${geolms_holdt}</td>`;
+        // Lønsedler
+        html += `<td class="number">${(emp.lonsedel_1 || 0).toFixed(1)}</td>`;
+        html += `<td class="number">${(emp.lonsedel_2 || 0).toFixed(1)}</td>`;
+        // Ferieoverførsel
+        const valgDisplay = (emp.ferieOverforselValg || '-').replace('Overfør til næste år', 'Overfør').replace('Udbetal med marts løn', 'Udbetal');
+        html += `<td>${valgDisplay}</td>`;
+        html += `<td class="number">${(emp.ferieOverforselDage || 0).toFixed(1)}</td>`;
+        // Beregninger
+        html += `<td class="number calc-cell"><strong>${total_shifts_ferie.toFixed(1)}</strong></td>`;
+        html += `<td class="number calc-cell"><strong>${eget_input_total.toFixed(1)}</strong></td>`;
+        html += `<td class="number calc-cell ${statusClass}"><strong>${forskel.toFixed(1)}</strong></td>`;
+        html += `<td class="${statusClass}">${statusText}</td>`;
+        // Time Off
+        html += `<td>${hasTimeOff ? `<button onclick="showEmployeeTimeOff(${idx})" class="btn-view-small">📅 Se (${timeOffCount})</button>` : '-'}</td>`;
+        html += '</tr>';
+    });
+
+    html += '</tbody></table>';
+    html += '</div>';
+    container.innerHTML = html;
+}
+
+// Show report of employees who haven't submitted data
+function showMissingSubmissionsReport() {
+    const notSubmitted = employees.filter(emp => !emp.hasSubmitted);
+    const submitted = employees.filter(emp => emp.hasSubmitted);
+
+    let html = '<div class="missing-report">';
+    html += `<h2>📊 Indsendelsesrapport</h2>`;
+    html += `<div class="stats-summary">`;
+    html += `<div class="stat-box stat-success"><strong>${submitted.length}</strong><br>Indsendt</div>`;
+    html += `<div class="stat-box stat-warning"><strong>${notSubmitted.length}</strong><br>Mangler</div>`;
+    html += `<div class="stat-box"><strong>${employees.length}</strong><br>I alt</div>`;
+    html += `</div>`;
+
+    if (notSubmitted.length > 0) {
+        html += `<h3 style="color: #ef4444; margin-top: 30px;">⚠️ Medarbejdere der ikke har indsendt data (${notSubmitted.length})</h3>`;
+        html += `<table class="report-table" style="margin-top: 15px;">`;
+        html += `<thead><tr><th style="text-align: left;">Navn</th></tr></thead><tbody>`;
+
+        notSubmitted.forEach(emp => {
+            html += `<tr><td>${emp.navn}</td></tr>`;
+        });
+
+        html += `</tbody></table>`;
+    } else {
+        html += `<p class="success-message" style="margin-top: 30px;">✅ Alle medarbejdere har indsendt deres data!</p>`;
+    }
+
+    if (submitted.length > 0) {
+        html += `<h3 style="color: #10b981; margin-top: 30px;">✅ Medarbejdere der har indsendt data (${submitted.length})</h3>`;
+        html += `<table class="report-table" style="margin-top: 15px;">`;
+        html += `<thead><tr><th style="text-align: left;">Navn</th><th>Indsendt</th></tr></thead><tbody>`;
+
+        submitted
+            .sort((a, b) => new Date(b.lastSubmitted) - new Date(a.lastSubmitted))
+            .forEach(emp => {
+                const date = new Date(emp.lastSubmitted).toLocaleString('da-DK', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+                html += `<tr><td>${emp.navn}</td><td>${date}</td></tr>`;
+            });
+
+        html += `</tbody></table>`;
+    }
+
+    html += `</div>`;
+
+    showCustomModal('Indsendelsesrapport', html);
+}
+
+// Export to CSV
+function exportToCSV() {
+    if (employees.length === 0) {
+        alert('Ingen data at eksportere');
+        return;
+    }
+
+    let csv = 'Navn;SHIFTS Ferie (1/1-31/8);SHIFTS Ferie (1/9-30/11);SHIFTS Ferie (1/12+);';
+    csv += 'SHIFTS Fridag (1/1-31/8);SHIFTS Fridag (1/9-30/11);SHIFTS Fridag (1/12+);';
+    csv += 'GEOLMS I alt;GEOLMS Holdt;Lønsedel 1;Lønsedel 2;';
+    csv += 'Ferieoverførsel Valg;Ferieoverførsel Dage;';
+    csv += 'Total SHIFTS Ferie;Total SHIFTS Fridag;Eget Input Total (GEOLMS+Lønsedler);Forskel (SHIFTS-Input);Status\n';
+
+    employees.forEach(emp => {
+        const total_shifts_ferie = (emp.shifts_ferie_1 || 0) + (emp.shifts_ferie_2 || 0) + (emp.shifts_ferie_3 || 0);
+        const total_shifts_fridag = (emp.shifts_fridag_1 || 0) + (emp.shifts_fridag_2 || 0) + (emp.shifts_fridag_3 || 0);
+        const geolms_holdt = (emp.geolms_dates || []).length;
+        const geolms_total = (emp.geolms_total || 0);
+        const lonsedel_total = (emp.lonsedel_1 || 0) + (emp.lonsedel_2 || 0);
+        const eget_input_total = geolms_total + lonsedel_total;
+        const forskel = total_shifts_ferie - eget_input_total;
+
+        let status = 'Match';
+        if (Math.abs(forskel) > 0.1) {
+            if (forskel > 0) {
+                status = `SHIFTS har ${forskel.toFixed(1)} mere`;
+            } else {
+                status = `Input har ${Math.abs(forskel).toFixed(1)} mere`;
+            }
+        }
+
+        csv += `${emp.navn};`;
+        csv += `${emp.shifts_ferie_1 || 0};`;
+        csv += `${emp.shifts_ferie_2 || 0};`;
+        csv += `${emp.shifts_ferie_3 || 0};`;
+        csv += `${emp.shifts_fridag_1 || 0};`;
+        csv += `${emp.shifts_fridag_2 || 0};`;
+        csv += `${emp.shifts_fridag_3 || 0};`;
+        csv += `${geolms_total};`;
+        csv += `${geolms_holdt};`;
+        csv += `${emp.lonsedel_1 || 0};`;
+        csv += `${emp.lonsedel_2 || 0};`;
+        csv += `${emp.ferieOverforselValg || '-'};`;
+        csv += `${emp.ferieOverforselDage || 0};`;
+        csv += `${total_shifts_ferie.toFixed(1)};`;
+        csv += `${total_shifts_fridag.toFixed(1)};`;
+        csv += `${eget_input_total.toFixed(1)};`;
+        csv += `${forskel.toFixed(1)};`;
+        csv += `${status}\n`;
+    });
+
+    // Create download link
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+
+    link.setAttribute('href', url);
+    link.setAttribute('download', `ferie_rapport_${new Date().toISOString().split('T')[0]}.csv`);
+    link.style.visibility = 'hidden';
+
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    showAlert('CSV fil downloaded!', 'success');
+}
+
+// Show alert
+function showAlert(message, type = 'success') {
+    const alert = document.createElement('div');
+    alert.className = `alert alert-${type}`;
+    alert.textContent = message;
+
+    const container = document.querySelector('.container');
+    container.insertBefore(alert, container.firstChild);
+
+    setTimeout(() => {
+        alert.remove();
+    }, 3000);
+}
+
+// Close modal when clicking outside
+window.onclick = function(event) {
+    const calendarModal = document.getElementById('calendarModal');
+    const pasteModal = document.getElementById('pasteModal');
+    const customModal = document.getElementById('customModal');
+
+    if (event.target === calendarModal) {
+        closeCalendar();
+    }
+    if (event.target === pasteModal) {
+        closePasteDialog();
+    }
+    if (event.target === customModal) {
+        closeCustomModal();
+    }
+}
+
+// Import functions
+function handleFileUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const contents = e.target.result;
+        importTimeOffData(contents);
+    };
+    reader.readAsText(file);
+}
+
+function showPasteDialog() {
+    document.getElementById('pasteModal').style.display = 'block';
+    document.getElementById('pasteArea').value = '';
+}
+
+function closePasteDialog() {
+    document.getElementById('pasteModal').style.display = 'none';
+}
+
+function processPastedData() {
+    const data = document.getElementById('pasteArea').value;
+    if (!data.trim()) {
+        showAlert('Ingen data indtastet', 'error');
+        return;
+    }
+    importTimeOffData(data);
+    closePasteDialog();
+}
+
+// Display Time Off History for current employee
+function displayTimeOffHistory() {
+    const container = document.getElementById('timeOffHistory');
+
+    if (!currentEmployee || !currentEmployee.timeOffRecords || currentEmployee.timeOffRecords.length === 0) {
+        container.innerHTML = '<p class="help-text">Ingen Time Off data importeret endnu</p>';
+        return;
+    }
+
+    // Group by reason
+    const grouped = {};
+    currentEmployee.timeOffRecords.forEach(record => {
+        if (!grouped[record.reason]) {
+            grouped[record.reason] = [];
+        }
+        grouped[record.reason].push(record);
+    });
+
+    let html = '';
+    Object.keys(grouped).forEach(reason => {
+        const records = grouped[reason];
+        const totalDays = records.reduce((sum, r) => sum + r.days, 0);
+
+        html += `<div class="time-off-group">`;
+        html += `<div class="time-off-header" onclick="toggleTimeOffDetails('${reason.replace(/'/g, "\\'")}')">`;
+        html += `<span><strong>${reason}</strong> - ${totalDays} dage</span>`;
+        html += `<span class="toggle-icon">▼</span>`;
+        html += `</div>`;
+        html += `<div class="time-off-details" id="timeoff-${reason.replace(/[^a-zA-Z0-9]/g, '_')}" style="display: none;">`;
+        html += `<table class="time-off-table">`;
+        html += `<tr><th>Start</th><th>Slut</th><th>Dage</th></tr>`;
+
+        records.forEach(record => {
+            const startFormatted = formatDate(record.startDate);
+            const endFormatted = formatDate(record.endDate);
+            html += `<tr>`;
+            html += `<td>${startFormatted}</td>`;
+            html += `<td>${endFormatted}</td>`;
+            html += `<td class="number">${record.days}</td>`;
+            html += `</tr>`;
+        });
+
+        html += `</table>`;
+        html += `</div>`;
+        html += `</div>`;
+    });
+
+    container.innerHTML = html;
+}
+
+function toggleTimeOffDetails(reason) {
+    const id = 'timeoff-' + reason.replace(/[^a-zA-Z0-9]/g, '_');
+    const element = document.getElementById(id);
+    if (element) {
+        element.style.display = element.style.display === 'none' ? 'block' : 'none';
+    }
+}
+
+function formatDate(dateStr) {
+    if (!dateStr) return '';
+    const date = new Date(dateStr);
+    if (isNaN(date)) return dateStr;
+    return date.toLocaleDateString('da-DK', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+    });
+}
+
+// Show Time Off for an employee in modal
+function showEmployeeTimeOff(employeeIdx) {
+    const emp = employees[employeeIdx];
+    if (!emp || !emp.timeOffRecords || emp.timeOffRecords.length === 0) return;
+
+    // Group by reason
+    const grouped = {};
+    let totalDays = 0;
+    emp.timeOffRecords.forEach(record => {
+        if (!grouped[record.reason]) {
+            grouped[record.reason] = [];
+        }
+        grouped[record.reason].push(record);
+        totalDays += record.days;
+    });
+
+    let html = `<h3>${emp.navn} - Time Off Oversigt</h3>`;
+    html += `<p style="margin-bottom: 20px;"><strong>Total dage:</strong> ${totalDays}</p>`;
+
+    Object.keys(grouped).forEach(reason => {
+        const records = grouped[reason];
+        const reasonDays = records.reduce((sum, r) => sum + r.days, 0);
+
+        html += `<div class="time-off-group">`;
+        html += `<div class="time-off-header-modal">`;
+        html += `<strong>${reason}</strong> - ${reasonDays} dage`;
+        html += `</div>`;
+        html += `<table class="time-off-table">`;
+        html += `<tr><th>Start Dato</th><th>Slut Dato</th><th>Dage</th></tr>`;
+
+        records.forEach(record => {
+            html += `<tr>`;
+            html += `<td>${formatDate(record.startDate)}</td>`;
+            html += `<td>${formatDate(record.endDate)}</td>`;
+            html += `<td class="number">${record.days}</td>`;
+            html += `</tr>`;
+        });
+
+        html += `</table>`;
+        html += `</div>`;
+    });
+
+    // Show in alert-style modal
+    showCustomModal('Time Off Detaljer', html);
+}
+
+// Custom modal for displaying content
+function showCustomModal(title, content) {
+    // Create modal if doesn't exist
+    let modal = document.getElementById('customModal');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'customModal';
+        modal.className = 'modal';
+        modal.innerHTML = `
+            <div class="modal-content" style="max-width: 800px;">
+                <span class="close" onclick="closeCustomModal()">&times;</span>
+                <div id="customModalContent"></div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+    }
+
+    document.getElementById('customModalContent').innerHTML = `<h2>${title}</h2>` + content;
+    modal.style.display = 'block';
+}
+
+function closeCustomModal() {
+    const modal = document.getElementById('customModal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
+}
+
+// Employee login functions
+function showEmployeeLogin() {
+    const modal = document.getElementById('employeeLoginModal');
+    const select = document.getElementById('employeeLoginSelect');
+
+    // Populate employee list
+    select.innerHTML = '<option value="">Vælg dit navn...</option>';
+    employees.forEach((emp, index) => {
+        const option = document.createElement('option');
+        option.value = index;
+        option.textContent = emp.navn;
+        select.appendChild(option);
+    });
+
+    modal.style.display = 'block';
+}
+
+function closeEmployeeLogin() {
+    document.getElementById('employeeLoginModal').style.display = 'none';
+}
+
+function employeeLogin() {
+    const select = document.getElementById('employeeLoginSelect');
+    const index = select.value;
+
+    if (!index) {
+        showAlert('Vælg dit navn fra listen', 'error');
+        return;
+    }
+
+    const employee = employees[index];
+    currentUserName = employee.navn;
+    closeEmployeeLogin();
+
+    // Hide login screen, show main app
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('mainApp').style.display = 'block';
+
+    // Auto-select the employee
+    document.getElementById('employeeSelect').value = index;
+    loadEmployeeData();
+
+    // Show user info
+    document.getElementById('userDisplay').style.display = 'inline-block';
+    document.getElementById('logoutBtn').style.display = 'inline-block';
+    document.getElementById('userDisplay').textContent = `👤 ${employee.navn}`;
+}
+    </script>
+</body>
+</html>
